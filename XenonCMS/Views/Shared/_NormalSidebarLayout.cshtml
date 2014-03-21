@@ -1,0 +1,12 @@
+﻿@using XenonCMS.Helpers
+
+@{
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+}
+
+<div class="col-md-8">
+    @RenderBody()
+</div>
+<div class="col-md-4">
+    @Html.Raw(LayoutHelper.Sidebar(ViewContext.RequestContext.HttpContext))
+</div>

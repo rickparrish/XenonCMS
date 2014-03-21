@@ -1,0 +1,37 @@
+﻿@using XenonCMS.Helpers
+@model XenonCMS.ViewModels.Blog.Details
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<h3>@Html.Raw(Model.Title)</h3>
+
+<div class="post-date">
+    Posted: @Html.DisplayFor(model => model.DatePosted)
+    @if (Model.DateLastUpdated.Subtract(Model.DatePosted).TotalSeconds > 5)
+    {
+        <text>
+            <br />Last Updated: @Html.DisplayFor(model => model.DateLastUpdated)
+        </text>
+    }
+</div>
+
+<div class="panel panel-default blog-post">
+    <div class="panel-body">
+        @Html.Raw(Model.FullPostText)
+    </div>
+
+    <div class="panel-footer">
+        @Html.ActionLink("Back to List", "Index")
+        | @Html.RouteLink("Permalink", "BlogPost", Model.ToRouteValues())
+
+        @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+        {
+            <text>
+                | @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+                | @Html.ActionLink("Delete", "Delete", new { id = Model.Id })
+            </text>
+        }
+    </div>
+</div>

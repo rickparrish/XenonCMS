@@ -1,0 +1,140 @@
+﻿@model XenonCMS.Areas.Admin.ViewModels.Pages.Create
+
+@{
+    ViewBag.Title = "Add a new page";
+}
+
+<h2>Add a new page</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    if (ViewData.ModelState.Keys.Any(k => ViewData.ModelState[k].Errors.Count() > 0))
+    {
+        <div class="alert alert-danger">
+            <button class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>Please correct the following problems:</strong>
+            @Html.ValidationSummary(false)
+        </div>
+    }
+
+    <div class="form-horizontal tab-content">
+        <ul style="margin-bottom: 15px;" class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#tabDetails">Details</a></li>
+            <li><a data-toggle="tab" href="#tabContent">Content</a></li>
+            <li><a data-toggle="tab" href="#tabAppearance">Appearance</a></li>
+        </ul>
+
+        <div id="tabDetails" class="tab-pane active in col-xs-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, new { @class = "control-label" })
+                <div>
+                    @Html.TextAreaFor(model => model.Title, new { @class = "form-control", rows = "2" })
+                    @Html.ValidationMessageFor(model => model.Title)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Text, new { @class = "control-label" })
+                <div>
+                    @Html.TextBoxFor(model => model.Text, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Text)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Slug, new { @class = "control-label" })
+                <div>
+                    @Html.TextBoxFor(model => model.Slug, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Slug)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Parents, new { @class = "control-label" })
+                <div>
+                    @Html.DropDownListFor(model => model.ParentId, Model.Parents, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ParentId)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.RequireAdmin, new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.RequireAdmin, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.RequireAdmin)
+                </div>
+            </div>
+        </div>
+
+        <div id="tabContent" class="tab-pane col-xs-12">
+            @Html.ValidationMessageFor(model => model.Html)
+            @Html.TextAreaFor(model => model.Html, new { @class = "ckeditor" })
+        </div>
+
+        <div id="tabAppearance" class="tab-pane col-xs-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Layouts, new { @class = "control-label" })
+                <div>
+                    @Html.DropDownListFor(model => model.Layout, Model.Layouts, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Layout)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ShowTitleOnPage, new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.ShowTitleOnPage)
+                    @Html.ValidationMessageFor(model => model.ShowTitleOnPage)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ShowInMenu, new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.ShowInMenu)
+                    @Html.ValidationMessageFor(model => model.ShowInMenu)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.RightAlign, new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.RightAlign)
+                    @Html.ValidationMessageFor(model => model.RightAlign)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DisplayOrder, new { @class = "control-label" })
+                <div>
+                    @Html.TextBoxFor(model => model.DisplayOrder, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.DisplayOrder)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group">
+        <input type="submit" value="Add page" class="btn btn-primary btn-lg" />
+        <div class="pull-right">
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger btn-lg" })
+        </div>
+    </div>
+}
+
+<script>
+    // Prepopulate the slug box if user came in via a "Create this page" link
+    $(window).load(function () {
+        if ($('#Slug').val() == "") {
+            var url = QueryStringValue("Url");
+            if (url) $('#Slug').val(url);
+        }
+    });
+</script>
+
+<script src="@Url.Content("~/ckeditor/ckeditor.js")"></script>

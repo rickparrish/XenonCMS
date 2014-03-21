@@ -1,0 +1,58 @@
+﻿@using XenonCMS.Helpers
+@model IEnumerable<XenonCMS.ViewModels.Blog.Index>
+
+@{
+    ViewBag.Title = "Blog posts";
+}
+
+<h2>
+    Blog posts
+    @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+    {
+        <text>
+            (@Html.ActionLink("add", "Create"))
+        </text>
+    }
+</h2>
+
+<hr />
+
+@foreach (var item in Model)
+{
+    <h3><a href="@Url.RouteUrl("BlogPost", item.ToRouteValues())">@Html.Raw(item.Title)</a></h3>
+
+    <div class="post-date">
+        Posted: @Html.DisplayFor(modelItem => item.DatePosted)
+        @if (item.DateLastUpdated.Subtract(item.DatePosted).TotalSeconds > 5)
+        {
+            <text>
+                <br />Last Updated: @Html.DisplayFor(modelItem => item.DateLastUpdated)
+            </text>
+        }
+    </div>
+
+    <div class="panel panel-default blog-post">
+        <div class="panel-body">
+            @Html.Raw(item.PreviewText ?? item.FullPostText)
+        </div>
+
+        <div class="panel-footer">
+            @if (string.IsNullOrEmpty(item.PreviewText))
+            {
+                @Html.RouteLink("Permalink", "BlogPost", item.ToRouteValues())
+            }
+            else
+            {
+                @Html.RouteLink("Read more...", "BlogPost", item.ToRouteValues())
+            }
+
+            @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+            {
+                <text>
+                    | @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                    | @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </text>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,18 @@
+﻿div.blog-post {
+    margin-left: 25px;
+    margin-bottom: 75px;
+}
+
+div.cke_contents {
+    height: 400px !important;
+}
+
+div.post-date {
+    color: #CCCCCC;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+span.field-validation-error {
+    color: #B94A48; /*TODO This is text-danger from Cerulean, should change based on theme*/
+}

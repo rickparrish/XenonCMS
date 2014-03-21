@@ -1,0 +1,20 @@
+﻿@model XenonCMS.ViewModels.Cms.Install
+
+@{
+    Layout = "~/Views/Shared/_JumbotronNoSidebarLayout.cshtml";
+    ViewBag.Title = "Install XenonCMS";
+}
+
+<p>It looks like XenonCMS needs to be installed for this new site!</p>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    //TODO Add elements to allow specifying settings (ie checkbox to enable/disable blog, contact (which will auto-create the pages))
+    //TODO Also inputs like contact email address, site title, etc
+
+    <p>I'm lazy, so I haven't gotten around to creating the install page yet.  For now, just click the button below and then go supply the values in the database manually.</p>
+
+    <input type="submit" value="Install on this site now" class="btn btn-primary btn-lg" />
+}

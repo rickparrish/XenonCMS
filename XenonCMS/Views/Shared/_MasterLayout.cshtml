@@ -1,0 +1,88 @@
+﻿@using XenonCMS.Helpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link rel="shortcut icon" href="~/Content/favicon.ico" />
+
+    <title>@ViewBag.Title - @LayoutHelper.SiteTitle(ViewContext.RequestContext.HttpContext)</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="~/Content/bootstrap.@(LayoutHelper.Theme(ViewContext.RequestContext.HttpContext)).min.css" rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link href="~/Content/sticky-footer-navbar.css" rel="stylesheet" />
+    <link href="~/Content/xenoncms.css" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="~/Scripts/html5shiv.js"></script>
+      <script src="~/Scripts/respond.min.js"></script>
+    <![endif]-->
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the top of the document so $ is defined -->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/xenoncms.js"></script>
+</head>
+
+<body>
+
+    <!-- Wrap all page content here -->
+    <div id="wrap">
+
+        <!-- Fixed navbar -->
+        <div class="navbar navbar-@LayoutHelper.NavBarStyle(ViewContext.RequestContext.HttpContext) navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="~/Home" class="navbar-brand">@LayoutHelper.SiteTitle(ViewContext.RequestContext.HttpContext)</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        @Html.Raw(LayoutHelper.NavMenu(LayoutHelper.LeftAligned, ViewContext.RequestContext.HttpContext, Url))
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        @Html.Raw(LayoutHelper.NavMenu(LayoutHelper.RightAligned, ViewContext.RequestContext.HttpContext, Url))
+                        @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+                        {
+                            <li class="dropdown">
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Admin <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="~/Admin/Settings">Settings</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="~/Admin/Pages">Page Editor</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+
+        <!-- Begin page content -->
+        <div class="container">
+            <div class="row">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">
+        <div class="container">
+            <p class="text-muted"><a href="http://www.randm.ca/products/xenoncms">XenonCMS</a> &copy; @DateTime.Now.Year - <a href="http://www.rickparrish.ca">Rick Parrish</a>, <a href="http://www.randm.ca">R&amp;M Software</a></p>
+        </div>
+    </div>
+</body>
+</html>

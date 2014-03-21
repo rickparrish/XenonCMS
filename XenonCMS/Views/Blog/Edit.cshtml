@@ -1,0 +1,87 @@
+﻿@model XenonCMS.ViewModels.Blog.Edit
+
+@{
+    Layout = "~/Views/Shared/_NormalNoSidebarLayout.cshtml";
+    ViewBag.Title = "Edit a blog post";
+}
+
+<h2>Edit a blog post</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+
+    if (ViewData.ModelState.Keys.Any(k => ViewData.ModelState[k].Errors.Count() > 0))
+    {
+        <div class="alert alert-danger">
+            <button class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>Please correct the following problems:</strong>
+            @Html.ValidationSummary(false)
+        </div>
+    }
+
+    <div class="form-horizontal tab-content">
+        <ul style="margin-bottom: 15px;" class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#tabDetails">Details</a></li>
+            <li><a data-toggle="tab" href="#tabContent">Content</a></li>
+            <li><a data-toggle="tab" href="#tabPreview">Preview</a></li>
+        </ul>
+
+        <div id="tabDetails" class="tab-pane active in col-xs-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, new { @class = "control-label" })
+                <div>
+                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Title)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Slug, new { @class = "control-label" })
+                <div>
+                    @Html.TextBoxFor(model => model.Slug, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Slug)
+                </div>
+                <div class="small">
+                    The <strong>"slug"</strong> is the textual part of the url that will be used to link to this post.  Usually it is the title with all non-alphanumeric characters replaced by a dash.<br />
+                    Leave this blank to have XenonCMS convert your title into a slug automatically.
+                </div>
+            </div>
+        </div>
+
+        <div id="tabContent" class="tab-pane col-xs-12">
+            <div class="alert alert-info">
+                If you have a lot to say, you can enter the full post here, and optionally enter a shorter Preview version of you post, which will then be displayed on the main blog index page.<br />
+                The preview is totally optional, and if you leave it blank the content you enter here will be used on the blog index page.
+            </div>
+            <div>
+                @Html.ValidationMessageFor(model => model.FullPostText)
+                @Html.TextAreaFor(model => model.FullPostText, new { @class = "ckeditor" })
+            </div>
+        </div>
+
+        <div id="tabPreview" class="tab-pane col-xs-12">
+            <div class="alert alert-info">
+                If your Content ran a little long, you can enter a shorter preview text here, which will then be displayed on the main blog index page.<br />
+                Just leave it blank if you don't want to use a shorter preview on the main blog index page.
+            </div>
+            <div>
+                @Html.ValidationMessageFor(model => model.PreviewText)
+                @Html.TextAreaFor(model => model.PreviewText, new { @class = "ckeditor" })
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group">
+        <input type="submit" value="Update post" class="btn btn-primary btn-lg" />
+        <div class="pull-right">
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger btn-lg" })
+        </div>
+    </div>
+}
+
+<script src="@Url.Content("~/ckeditor/ckeditor.js")"></script>

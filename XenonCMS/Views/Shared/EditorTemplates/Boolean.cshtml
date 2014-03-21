@@ -1,0 +1,12 @@
+﻿@*From: http://zootfroot.blogspot.ca/2012/06/override-aspnet-mvc-3-nullable-boolean.html*@
+@model bool?
+@using System.Web.Mvc
+
+@{
+    var selectList = new List<SelectListItem>();
+    selectList.Add(new SelectListItem { Text = "Please select", Value = "" });
+    selectList.Add(new SelectListItem { Text = "Yes", Value = "true", Selected = Model.HasValue && Model.Value });
+    selectList.Add(new SelectListItem { Text = "No", Value = "false", Selected = Model.HasValue && !Model.Value });
+}
+
+@Html.DropDownListFor(model => model, selectList, new { @class = "form-control" })
