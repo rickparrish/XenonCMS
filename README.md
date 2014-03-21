@@ -14,7 +14,11 @@ But just in case you're feeling adventurous, don't forget to create a Connection
 And why did I choose the name XenonCMS?  I'm glad you asked!<br />
 <br />
 My initial thought was to call it something like NIHCMS, short for Not Invented Here CMS (since pretty much the only reason I'm writing this is because I don't want to use somebody elses CMS, even if it is better and has more features and is less likely to crash, etc).  Pretty boring, right?<br />
+<br />
 So then I started looking into different acronyms, then anagrams, and eventually I found an interesting anagram for Not Built Here: Inert, Blue, Hot<br />
+<br />
 "Inert" caught my eye right away.  I sucked at chemistry, but I always liked the period table.  So immediately I went to look up the list of noble gases.<br />
+<br />
 "Blue" narrowed the list of candidate gases down nicely.  After some (very!) quick research, it looked like only Argon and Xenon fit.  And the picture for Argon mentioned something about mixing with Mercury to achieve the electric blue light, so I decided to go with Xenon instead<br />
+<br />
 "Hot" doesn't seem to fit, but who cares!
