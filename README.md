@@ -17,7 +17,7 @@ My initial thought was to call it something like NIHCMS, short for Not Invented 
 <br />
 So then I started looking into different acronyms, then anagrams, and eventually I found an interesting anagram for Not Built Here: Inert, Blue, Hot<br />
 <br />
-"Inert" caught my eye right away.  I sucked at chemistry, but I always liked the period table.  So immediately I went to look up the list of noble gases.<br />
+"Inert" caught my eye right away.  I sucked at chemistry, but I always liked the periodic table.  So immediately I went to look up the list of noble gases.<br />
 <br />
 "Blue" narrowed the list of candidate gases down nicely.  After some (very!) quick research, it looked like only Argon and Xenon fit.  And the picture for Argon mentioned something about mixing with Mercury to achieve the electric blue light, so I decided to go with Xenon instead<br />
 <br />
