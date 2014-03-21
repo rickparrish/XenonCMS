@@ -65,7 +65,7 @@ namespace XenonCMS.Helpers
 
                 if (Site == null)
                 {
-                    Site = new Site();
+                    return "default";
                 }
                 else
                 {
@@ -127,8 +127,7 @@ namespace XenonCMS.Helpers
                 {
                     // Get site side bar
                     var Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
-                    if (Site == null) Site = new Site();
-                    Result += Site.Sidebar;
+                    if (Site != null) Result += Site.Sidebar;
 
                     // Get global side bar(s)
                     var GlobalSidebars = DB.SiteGlobalSidebars.Where(x => x.Site.Domain == RequestDomain).OrderBy(x => x.GlobalSidebar.DisplayOrder);
@@ -160,7 +159,7 @@ namespace XenonCMS.Helpers
 
                 if (Site == null)
                 {
-                    Site = new Site();
+                    return Globals.GetRequestDomain(httpContext);
                 }
                 else
                 {
@@ -186,7 +185,7 @@ namespace XenonCMS.Helpers
 
                 if (Site == null)
                 {
-                    Site = new Site();
+                    return "Cerulean";
                 }
                 else
                 {

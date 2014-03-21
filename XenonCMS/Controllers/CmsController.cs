@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using XenonCMS.Helpers;
 using XenonCMS.Models;
@@ -86,12 +88,17 @@ namespace XenonCMS.Controllers
                     {
                         string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
                         Site Site = new Site();
+                        Site.AdminIPs = new List<SiteAdminIP>();
+                        Site.BlogPosts = new List<SiteBlogPost>();
+                        Site.Pages = new List<SitePage>();
 
                         SiteAdminIP NewAdminIP = new SiteAdminIP();
                         NewAdminIP.Address = ControllerContext.RequestContext.HttpContext.Request.UserHostAddress;
                         Site.AdminIPs.Add(NewAdminIP);
 
                         SiteBlogPost NewBlogPost = new SiteBlogPost();
+                        NewBlogPost.DateLastUpdated = DateTime.Now;
+                        NewBlogPost.DatePosted = DateTime.Now;
                         NewBlogPost.PreviewText = "XenonCMS has been successfully installed and is ready for use on " + RequestDomain + "!";
                         NewBlogPost.Slug = "xenoncms-installed";
                         NewBlogPost.Title = "XenonCMS Installed";
@@ -99,8 +106,11 @@ namespace XenonCMS.Controllers
 
                         Site.ContactEmail = "contact@" + RequestDomain;
                         Site.Domain = RequestDomain;
+                        Site.NavBarInverted = false;
 
                         SitePage NewPageHome = new SitePage();
+                        NewPageHome.DateAdded = DateTime.Now;
+                        NewPageHome.DateLastUpdated = DateTime.Now;
                         NewPageHome.DisplayOrder = 1;
                         NewPageHome.Html = "XenonCMS has been successfully installed and is ready for use on " + RequestDomain + "!";
                         NewPageHome.Layout = "JumbotronNoSidebar";
@@ -115,6 +125,8 @@ namespace XenonCMS.Controllers
                         Site.Pages.Add(NewPageHome);
 
                         SitePage NewPageBlog = new SitePage();
+                        NewPageBlog.DateAdded = DateTime.Now;
+                        NewPageBlog.DateLastUpdated = DateTime.Now;
                         NewPageBlog.DisplayOrder = 2;
                         NewPageBlog.Html = "N/A";
                         NewPageBlog.Layout = "NormalSidebar";
@@ -129,6 +141,8 @@ namespace XenonCMS.Controllers
                         Site.Pages.Add(NewPageBlog);
 
                         SitePage NewPageContact = new SitePage();
+                        NewPageContact.DateAdded = DateTime.Now;
+                        NewPageContact.DateLastUpdated = DateTime.Now;
                         NewPageContact.DisplayOrder = 3;
                         NewPageContact.Html = "N/A";
                         NewPageContact.Layout = "NormalSidebar";
