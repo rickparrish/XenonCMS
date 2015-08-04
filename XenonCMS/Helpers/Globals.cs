@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -73,7 +74,7 @@ namespace XenonCMS.Helpers
             string Result = httpContext.Request.Url.Host.ToLower();
             if (Result == "localhost")
             {
-                Result = "randm.ca";
+                Result = ConfigurationManager.AppSettings["XenonCMS:DebugDomain"];
             }
             else if (Result.StartsWith("www."))
             {
