@@ -23,7 +23,7 @@ namespace XenonCMS.Helpers
                 using (XenonCMSContext DB = new XenonCMSContext())
                 {
                     // Get nav menu
-                    var NavMenuItems = DB.SitePages.Where(x => (x.Site.Domain == RequestDomain) && x.ShowInMenu && (x.ParentId == 0) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text);
+                    var NavMenuItems = DB.SitePages.Where(x => (x.Site.Domain == RequestDomain) && x.ShowInMenu && (x.ParentId == 0) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text).ToArray();
                     foreach (var NMI in NavMenuItems)
                     {
                         // Build the menu item
