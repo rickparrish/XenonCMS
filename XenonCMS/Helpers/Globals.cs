@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Hosting;
 using XenonCMS.Models;
 
 namespace XenonCMS.Helpers
@@ -128,6 +130,29 @@ namespace XenonCMS.Helpers
         {
             List<string> AdminIPs = GetAdminIPs(httpContext);
             return AdminIPs.Contains(httpContext.Request.UserHostAddress);
+        }
+
+        // From: https://github.com/madskristensen/MiniBlog
+        static public string SaveImagesToDisk(string html, HttpContextBase httpContext)
+        {
+            foreach (Match match in Regex.Matches(html, "src=\"(data:([^\"]+))\"(>.*?</a>)?"))
+            {
+                // Get the bytes of the image
+                int StartIndex = match.Groups[2].Value.IndexOf("base64,", StringComparison.Ordinal) + "base64,".Length;
+                byte[] ImageBytes = Convert.FromBase64String(match.Groups[2].Value.Substring(StartIndex));
+
+                // Save the image to disk
+                Guid Id = Guid.NewGuid();
+                string Src = "~/Images/" + Id;
+                string Filename = HostingEnvironment.MapPath("~/Images/" + GetRequestDomain(httpContext) + "/" + Id + ".png"); // TODO What happens if they upload a .gif or .jpg?
+                Directory.CreateDirectory(Path.GetDirectoryName(Filename));
+                File.WriteAllBytes(Filename, ImageBytes);
+
+                // Update the html to include a link instead of data: uri
+                html = new Regex("src=\"(data:([^\"]+))\"").Replace(html, "src=\"" + VirtualPathUtility.ToAbsolute(Src) + "\" alt=\"\"", 1);
+            }
+
+            return html;
         }
     }
 }

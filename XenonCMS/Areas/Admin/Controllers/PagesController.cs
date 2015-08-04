@@ -60,6 +60,7 @@ namespace XenonCMS.Areas.Admin.Controllers
 
                     // Transform values
                     NewPage.Slug = Globals.GetSlug(NewPage.Slug, true);
+                    NewPage.Html = Globals.SaveImagesToDisk(NewPage.Html, ControllerContext.HttpContext);
 
                     // Save changes
                     db.SitePages.Add(NewPage);
@@ -140,6 +141,7 @@ namespace XenonCMS.Areas.Admin.Controllers
 
                         // Transform values
                         EditedPage.Slug = NewSlug;
+                        EditedPage.Html = Globals.SaveImagesToDisk(EditedPage.Html, ControllerContext.HttpContext);
 
                         // Save changes
                         db.Entry(EditedPage).State = EntityState.Modified;

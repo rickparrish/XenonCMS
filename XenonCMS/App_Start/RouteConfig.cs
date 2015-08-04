@@ -32,6 +32,13 @@ namespace XenonCMS
             );
 
             routes.MapRoute(
+                name: "Image",
+                url: "Images/{id}",
+                defaults: new { controller = "Images", action = "Image" },
+                constraints: new { controller = "Images" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

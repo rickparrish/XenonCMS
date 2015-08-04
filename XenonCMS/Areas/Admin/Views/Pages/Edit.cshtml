@@ -72,7 +72,7 @@
 
         <div id="tabContent" class="tab-pane col-xs-12">
             @Html.ValidationMessageFor(model => model.Html)
-            @Html.TextAreaFor(model => model.Html, new { @class = "ckeditor" })
+            @Html.TextAreaFor(model => model.Html, new { @class = "summernote" })
         </div>
 
         <div id="tabAppearance" class="tab-pane col-xs-12">
@@ -138,4 +138,18 @@
     });
 </script>
 
-<script src="@Url.Content("~/ckeditor/ckeditor.js")"></script>
+<link href="@Url.Content("~/Content/summernote.css")" rel="stylesheet" />
+<link href="@Url.Content("~/Content/font-awesome.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/Scripts/summernote.min.js")"></script>
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            height: 300,                 // set editor height
+
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+
+            focus: false,                 // set focus to editable area after initializing summernote
+        });
+    });
+</script>
