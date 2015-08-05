@@ -15,7 +15,10 @@ namespace XenonCMS.Migrations
                         Address = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
-            
+
+            Sql("INSERT INTO GlobalAdminIPs (Address) VALUES ('::1')");
+            Sql("INSERT INTO GlobalAdminIPs (Address) VALUES ('127.0.0.1')");
+
             CreateTable(
                 "dbo.GlobalSidebars",
                 c => new

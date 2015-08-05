@@ -77,6 +77,7 @@ namespace XenonCMS.Controllers
         //
         // POST: /Cms/Install/
         [HttpPost]
+        [GlobalAdminIPAuthorize]
         [ValidateAntiForgeryToken]
         public ActionResult Install(Install model)
         {

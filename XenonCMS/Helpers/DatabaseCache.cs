@@ -9,12 +9,12 @@ namespace XenonCMS.Helpers
 {
     public class DatabaseCache
     {
-        static public void AddAdminIPs(HttpContextBase httpContext, List<string> adminIPs)
+        static public void AddAdminIPs(HttpContextBase httpContext, List<string> adminIPs, bool globalOnly)
         {
             if (adminIPs != null)
             {
                 string RequestDomain = Globals.GetRequestDomain(httpContext);
-                string CacheKey = "AdminIPs-" + RequestDomain;
+                string CacheKey = globalOnly ? "GlobalAdminIPs" : "AdminIPs-" + RequestDomain;
                 httpContext.Cache.Add(CacheKey, adminIPs, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Normal, null);
             }
         }
@@ -79,10 +79,10 @@ namespace XenonCMS.Helpers
             }
         }
 
-        static public List<string> GetAdminIPs(HttpContextBase httpContext)
+        static public List<string> GetAdminIPs(HttpContextBase httpContext, bool globalOnly)
         {
             string RequestDomain = Globals.GetRequestDomain(httpContext);
-            string CacheKey = "AdminIPs-" + RequestDomain;
+            string CacheKey = globalOnly ? "GlobalAdminIPs" : "AdminIPs-" + RequestDomain;
             return (List<string>)httpContext.Cache[CacheKey];
         }
 

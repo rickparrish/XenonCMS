@@ -1,11 +1,13 @@
-﻿@model XenonCMS.ViewModels.Cms.Install
+﻿@using XenonCMS.Helpers
+@model XenonCMS.ViewModels.Cms.Install
 
 @{
     Layout = "~/Views/Shared/_JumbotronNoSidebarLayout.cshtml";
     ViewBag.Title = "Install XenonCMS";
 }
 
-<p>It looks like XenonCMS needs to be installed for this new site!</p>
+<h2>It looks like XenonCMS needs to be installed for this new site!</h2>
+<hr />
 
 @using (Html.BeginForm())
 {
@@ -14,7 +16,15 @@
     //TODO Add elements to allow specifying settings (ie checkbox to enable/disable blog, contact (which will auto-create the pages))
     //TODO Also inputs like contact email address, site title, etc
 
-    <p>I'm lazy, so I haven't gotten around to creating the install page yet.  For now, just click the button below and then go supply the values in the database manually.</p>
+    if (Globals.IsUserFromGlobalAdminIP(ViewContext.RequestContext.HttpContext))
+    {
+        <p>I'm lazy, so I haven't gotten around to creating the install page yet.  For now, just click the button below and then go supply the values in the database manually.</p>
 
-    <input type="submit" value="Install on this site now" class="btn btn-primary btn-lg" />
+        <input type="submit" value="Install on this site now" class="btn btn-primary btn-lg" />
+    }
+    else
+    {
+        <p>You aren't authorized to do the installing though...please manually add your hostname/ip address to the XenonCMS..GlobalAdminIPs table.</p>
+        <p>(That table is cached, so you'll need to recycle the site to get it to see your change)</p>
+    }
 }

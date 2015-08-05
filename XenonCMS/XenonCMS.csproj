@@ -496,7 +496,8 @@
     <Compile Include="Helpers\DatabaseCache.cs" />
     <Compile Include="Helpers\CmsUrlConstraint.cs" />
     <Compile Include="Helpers\Globals.cs" />
-    <Compile Include="Helpers\IPAuthorize.cs" />
+    <Compile Include="Helpers\GlobalAdminIPAuthorizeAttribute.cs" />
+    <Compile Include="Helpers\SiteAdminIPAuthorizeAttribute.cs" />
     <Compile Include="Helpers\LayoutHelper.cs" />
     <Compile Include="Helpers\ModelConverter.cs" />
     <Compile Include="Migrations\201403210041232_Create.cs" />

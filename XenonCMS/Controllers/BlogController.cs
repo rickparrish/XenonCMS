@@ -41,7 +41,7 @@ namespace XenonCMS.Controllers
         }
 
         // GET: /Blog/Create
-        [IPAuthorize]
+        [SiteAdminIPAuthorize]
         public ActionResult Create()
         {
             return View();
@@ -50,7 +50,7 @@ namespace XenonCMS.Controllers
         // POST: /Blog/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [IPAuthorize]
+        [SiteAdminIPAuthorize]
         public ActionResult Create(Create viewModel)
         {
             if (ModelState.IsValid)
@@ -87,7 +87,7 @@ namespace XenonCMS.Controllers
         }
 
         // GET: /Blog/Edit/5
-        [IPAuthorize]
+        [SiteAdminIPAuthorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -112,7 +112,7 @@ namespace XenonCMS.Controllers
 
         // POST: /Blog/Edit/5
         [HttpPost]
-        [IPAuthorize]
+        [SiteAdminIPAuthorize]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Edit viewModel)
         {
@@ -157,7 +157,7 @@ namespace XenonCMS.Controllers
         }
 
         // GET: /Blog/Delete/5
-        [IPAuthorize]
+        [SiteAdminIPAuthorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -183,7 +183,7 @@ namespace XenonCMS.Controllers
         // POST: /Blog/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [IPAuthorize]
+        [SiteAdminIPAuthorize]
         public ActionResult DeleteConfirmed(int id)
         {
             string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);

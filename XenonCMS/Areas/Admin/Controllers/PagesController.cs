@@ -10,7 +10,7 @@ using XenonCMS.Models;
 
 namespace XenonCMS.Areas.Admin.Controllers
 {
-    [IPAuthorize]
+    [SiteAdminIPAuthorize]
     public class PagesController : Controller
     {
         private XenonCMSContext db = new XenonCMSContext();

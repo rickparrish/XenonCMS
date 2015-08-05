@@ -14,9 +14,9 @@ namespace XenonCMS.Helpers
 {
     static public class Globals
     {
-        static private List<string> GetAdminIPs(HttpContextBase httpContext)
+        static private List<string> GetAdminIPs(HttpContextBase httpContext, bool globalOnly)
         {
-            List<string> Result = DatabaseCache.GetAdminIPs(httpContext);
+            List<string> Result = DatabaseCache.GetAdminIPs(httpContext, globalOnly);
             if (Result == null)
             {
                 Result = new List<string>();
@@ -32,15 +32,18 @@ namespace XenonCMS.Helpers
                             Result.Add(Row.Address);
                         }
 
-                        // Site admin ips
-                        foreach (var Row in DB.SiteAdminIPs.Where(x => x.Site.Domain == RequestDomain))
+                        if (!globalOnly)
                         {
-                            Result.Add(Row.Address);
+                            // Site admin ips
+                            foreach (var Row in DB.SiteAdminIPs.Where(x => x.Site.Domain == RequestDomain))
+                            {
+                                Result.Add(Row.Address);
+                            }
                         }
                     }
 
                     // Cache what we have so far, so if the dns lookup is necessary, and takes awhile, we won't have multiple requests doing it
-                    DatabaseCache.AddAdminIPs(httpContext, Result);
+                    DatabaseCache.AddAdminIPs(httpContext, Result, globalOnly);
 
                     // Lookup any hostnames and convert to ip address
                     for (int i = 0; i < Result.Count; i++)
@@ -60,7 +63,7 @@ namespace XenonCMS.Helpers
                     }
 
                     // Re-cache, now that we have dns lookups completed
-                    DatabaseCache.AddAdminIPs(httpContext, Result);
+                    DatabaseCache.AddAdminIPs(httpContext, Result, globalOnly);
                 }
                 catch (Exception)
                 {
@@ -128,10 +131,16 @@ namespace XenonCMS.Helpers
 
         static public bool IsUserFromAdminIP(HttpContextBase httpContext)
         {
-            List<string> AdminIPs = GetAdminIPs(httpContext);
+            List<string> AdminIPs = GetAdminIPs(httpContext, false);
             return AdminIPs.Contains(httpContext.Request.UserHostAddress);
         }
 
+        static public bool IsUserFromGlobalAdminIP(HttpContextBase httpContext)
+        {
+            List<string> AdminIPs = GetAdminIPs(httpContext, true);
+            return AdminIPs.Contains(httpContext.Request.UserHostAddress);
+        }
+        
         // From: https://github.com/madskristensen/MiniBlog
         static public string SaveImagesToDisk(string html, HttpContextBase httpContext)
         {
