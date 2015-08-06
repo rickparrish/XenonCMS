@@ -144,21 +144,24 @@ namespace XenonCMS.Helpers
         // From: https://github.com/madskristensen/MiniBlog
         static public string SaveImagesToDisk(string html, HttpContextBase httpContext)
         {
-            foreach (Match match in Regex.Matches(html, "src=\"(data:([^\"]+))\"(>.*?</a>)?"))
+            foreach (Match M in Regex.Matches(html, "src=\"(data:([^\"]+))\"(>.*?</a>)?"))
             {
+                // Get a new guid to use when naming this image
+                Guid ImageId = Guid.NewGuid();
+
                 // Get the bytes of the image
-                int StartIndex = match.Groups[2].Value.IndexOf("base64,", StringComparison.Ordinal) + "base64,".Length;
-                byte[] ImageBytes = Convert.FromBase64String(match.Groups[2].Value.Substring(StartIndex));
+                int StartIndex = M.Groups[2].Value.IndexOf("base64,", StringComparison.Ordinal) + "base64,".Length;
+                byte[] ImageBytes = Convert.FromBase64String(M.Groups[2].Value.Substring(StartIndex));
 
                 // Save the image to disk
-                Guid Id = Guid.NewGuid();
-                string Src = "~/Images/" + Id;
-                string Filename = HostingEnvironment.MapPath("~/Images/" + GetRequestDomain(httpContext) + "/" + Id + ".png"); // TODO What happens if they upload a .gif or .jpg?
+                string Extension = "." + Regex.Match(M.Value, "data:([^/]+)/([a-z]+);base64").Groups[2].Value;
+                if (string.IsNullOrWhiteSpace(Extension)) Extension = ".png"; // Default to .png if no extension was found
+                string Filename = HostingEnvironment.MapPath("~/Images/" + GetRequestDomain(httpContext) + "/" + ImageId + Extension);
                 Directory.CreateDirectory(Path.GetDirectoryName(Filename));
                 File.WriteAllBytes(Filename, ImageBytes);
 
                 // Update the html to include a link instead of data: uri
-                html = new Regex("src=\"(data:([^\"]+))\"").Replace(html, "src=\"" + VirtualPathUtility.ToAbsolute(Src) + "\" alt=\"\"", 1);
+                html = new Regex("src=\"(data:([^\"]+))\"").Replace(html, "src=\"" + VirtualPathUtility.ToAbsolute("~/Images/" + ImageId + Extension) + "\" alt=\"\"", 1);
             }
 
             return html;

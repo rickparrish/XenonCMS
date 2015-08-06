@@ -33,7 +33,7 @@ namespace XenonCMS
 
             routes.MapRoute(
                 name: "Image",
-                url: "Images/{id}",
+                url: "Images/{filename}",
                 defaults: new { controller = "Images", action = "Image" },
                 constraints: new { controller = "Images" }
             );
