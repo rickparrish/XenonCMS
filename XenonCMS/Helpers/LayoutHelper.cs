@@ -81,7 +81,7 @@ namespace XenonCMS.Helpers
             // Get current page
             string CurrentUrl = httpContext.Request.RawUrl.Trim('/').ToLower();
             if (CurrentUrl.EndsWith("/index")) CurrentUrl = CurrentUrl.Substring(0, CurrentUrl.LastIndexOf("/"));
-            if (string.IsNullOrEmpty(CurrentUrl)) CurrentUrl = "home";
+            if (string.IsNullOrWhiteSpace(CurrentUrl)) CurrentUrl = "home";
 
             // Get database entries
             List<NavMenuItem> NavMenuItems = GetNavMenuItems(httpContext, Globals.IsUserFromAdminIP(httpContext), rightAlign);

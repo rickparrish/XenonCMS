@@ -15,7 +15,7 @@ namespace XenonCMS.Controllers
         public ActionResult Index(string url)
         {
             // Clean up the url parameter
-            if (string.IsNullOrEmpty(url))
+            if (string.IsNullOrWhiteSpace(url))
             {
                 url = "home";
             }

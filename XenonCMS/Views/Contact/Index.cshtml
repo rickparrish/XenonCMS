@@ -23,7 +23,7 @@
     }
 
     <div class="form-horizontal">
-        @if (!string.IsNullOrEmpty(ViewBag.Message))
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Message))
         {
             <div class="alert alert-dismissable alert-@ViewBag.MessageClass">
                 <button data-dismiss="alert" class="close" type="button">×</button>

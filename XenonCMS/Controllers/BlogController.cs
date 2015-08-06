@@ -66,7 +66,7 @@ namespace XenonCMS.Controllers
                 NewPost.SiteId = db.Sites.Single(x => x.Domain == RequestDomain).Id;
                 
                 // Transform values
-                if (string.IsNullOrEmpty(viewModel.Slug)) NewPost.Slug = NewPost.Title;
+                if (string.IsNullOrWhiteSpace(viewModel.Slug)) NewPost.Slug = NewPost.Title;
                 NewPost.Slug = Globals.GetSlug(NewPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
                 NewPost.FullPostText = Globals.SaveImagesToDisk(NewPost.FullPostText, ControllerContext.HttpContext);
                 NewPost.PreviewText = Globals.SaveImagesToDisk(NewPost.PreviewText, ControllerContext.HttpContext);
@@ -134,7 +134,7 @@ namespace XenonCMS.Controllers
                     EditedPost.DateLastUpdated = DateTime.Now;
                     
                     // Transform values
-                    if (string.IsNullOrEmpty(EditedPost.Slug)) EditedPost.Slug = EditedPost.Title;
+                    if (string.IsNullOrWhiteSpace(EditedPost.Slug)) EditedPost.Slug = EditedPost.Title;
                     EditedPost.Slug = Globals.GetSlug(EditedPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
                     EditedPost.FullPostText = Globals.SaveImagesToDisk(EditedPost.FullPostText, ControllerContext.HttpContext);
                     EditedPost.PreviewText = Globals.SaveImagesToDisk(EditedPost.PreviewText, ControllerContext.HttpContext);

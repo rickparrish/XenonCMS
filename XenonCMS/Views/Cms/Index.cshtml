@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_" + ViewBag.Layout + "Layout.cshtml";
 }
 
-@if (ViewBag.ShowTitleOnPage && !string.IsNullOrEmpty(ViewBag.Title))
+@if (ViewBag.ShowTitleOnPage && !string.IsNullOrWhiteSpace(ViewBag.Title))
 {
     <h2>@ViewBag.Title</h2>
 }

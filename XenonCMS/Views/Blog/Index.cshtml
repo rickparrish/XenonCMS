@@ -37,7 +37,7 @@
         </div>
 
         <div class="panel-footer">
-            @if (string.IsNullOrEmpty(item.PreviewText))
+            @if (string.IsNullOrWhiteSpace(item.PreviewText))
             {
                 @Html.RouteLink("Permalink", "BlogPost", item.ToRouteValues())
             }

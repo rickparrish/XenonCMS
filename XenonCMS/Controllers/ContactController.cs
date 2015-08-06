@@ -32,7 +32,7 @@ namespace XenonCMS.Controllers
                         try
                         {
                             // Check for a url, and flag as spam if found
-                            if (!string.IsNullOrEmpty(model.Url)) model.Subject = "(CONTACT_SPAM) " + model.Subject;
+                            if (!string.IsNullOrWhiteSpace(model.Url)) model.Subject = "(CONTACT_SPAM) " + model.Subject;
 
                             // Send email
                             Email.From = new MailAddress(model.Email, model.Name);
