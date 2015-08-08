@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace XenonCMS.Models
 {
@@ -11,6 +12,11 @@ namespace XenonCMS.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+            modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
+
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<XenonCMSContext, XenonCMS.Migrations.Configuration>());
         }
 

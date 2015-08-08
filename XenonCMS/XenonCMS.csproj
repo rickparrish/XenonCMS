@@ -52,6 +52,7 @@
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
@@ -480,6 +481,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\ImportController.cs" />
     <Compile Include="Areas\Admin\Controllers\PagesController.cs" />
     <Compile Include="Areas\Admin\ViewModels\Pages\Edit.cs" />
     <Compile Include="Areas\Admin\ViewModels\Pages\Delete.cs" />
@@ -503,6 +505,10 @@
     <Compile Include="Migrations\201403210041232_Create.cs" />
     <Compile Include="Migrations\201403210041232_Create.Designer.cs">
       <DependentUpon>201403210041232_Create.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508082241598_CascadeDelete changes.cs" />
+    <Compile Include="Migrations\201508082241598_CascadeDelete changes.Designer.cs">
+      <DependentUpon>201508082241598_CascadeDelete changes.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModels\Blog\Create.cs" />
@@ -570,6 +576,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="Areas\Admin\Views\Import\GetSimple.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -587,6 +594,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201403210041232_Create.resx">
       <DependentUpon>201403210041232_Create.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508082241598_CascadeDelete changes.resx">
+      <DependentUpon>201508082241598_CascadeDelete changes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
