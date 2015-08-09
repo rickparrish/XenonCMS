@@ -39,6 +39,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                             HandleGetSimpleNewsManagerPosts(Zip, DB);
                             HandleGetSimplePages(Zip, DB);
                             HandleGetSimpleWebsiteXml(Zip, DB);
+                            // TODO Handle uploads (file to /Files (need to handle like Images) and screenshots to /Images/Screenshots)
                         }
                     }
                 }
@@ -131,17 +132,28 @@ namespace XenonCMS.Areas.Admin.Controllers
             int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
 
             // Handle the pages files
+            var TopLevelPages = new Dictionary<int, string>();
             var PagesFiles = GetSimpleGetXmlDocuments(zip, "pages/");
-            foreach (var KVP in PagesFiles)
+            foreach (var KVP in PagesFiles.OrderBy(x => x.Value.DocumentElement.SelectSingleNode("parent").InnerText))
             {
                 // Get slug so we can skip built-in pages
                 string Parent = KVP.Value.DocumentElement.SelectSingleNode("parent").InnerText;
                 string Url = KVP.Value.DocumentElement.SelectSingleNode("url").InnerText;
                 string Slug = string.IsNullOrWhiteSpace(Parent) ? Url : Parent + "/" + Url;
                 if (Slug == "index") Slug = "home";
-                if ((Slug == "blog") || (Slug == "contact") || (Slug == "news"))
+                if (Slug == "news") Slug = "blog";
+                if ((Slug == "blog") || (Slug == "contact"))
                 {
-                    // TODO Skipping these built-ins
+                    // Only update the display order for these built-ins
+                    var SP = DB.SitePages.SingleOrDefault(x => (x.Site.Domain == RequestDomain) && (x.Slug == Slug));
+                    if (SP != null)
+                    {
+                        SP.DisplayOrder = Convert.ToInt32(KVP.Value.DocumentElement.SelectSingleNode("menuOrder").InnerText);
+                        // TODO Can this be used on the blog/contact header? SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
+                        DB.SaveChanges();
+
+                        DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
+                    }
                 }
                 else
                 {
@@ -153,7 +165,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                     SP.DisplayOrder = Convert.ToInt32(KVP.Value.DocumentElement.SelectSingleNode("menuOrder").InnerText);
                     SP.Html = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("content").InnerText);
                     SP.Layout = "NormalNoSidebar"; // TODO there is a "template" tag
-                    SP.ParentId = 0; // TODO there is a "parent" tag
+                    SP.ParentId = (TopLevelPages.ContainsValue(Parent)) ? TopLevelPages.Single(x => x.Value == Parent).Key : 0;
                     SP.RequireAdmin = false; // TODO "private" tag
                     SP.RightAlign = false;
                     SP.ShowInMenu = (KVP.Value.DocumentElement.SelectSingleNode("menuStatus").InnerText == "Y");
@@ -162,10 +174,14 @@ namespace XenonCMS.Areas.Admin.Controllers
                     SP.Slug = Slug;
                     SP.Text = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename text to something more intuitive
                     SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
+
                     if (SP.Id <= 0) DB.SitePages.Add(SP);
                     DB.SaveChanges();
+
                     DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
                     DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, Slug);
+
+                    if (string.IsNullOrWhiteSpace(Parent)) TopLevelPages.Add(SP.Id, SP.Slug);
                 }
             }
         }
