@@ -36,6 +36,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                         using (var Zip = new ZipArchive(file.InputStream))
                         {
                             HandleGetSimpleNewsManagerPosts(Zip, DB);
+                            HandleGetSimplePages(Zip, DB);
                         }
                     }
                 }
@@ -103,6 +104,81 @@ namespace XenonCMS.Areas.Admin.Controllers
                 else
                 {
                     // TODO Skipping blog post, slug already exists
+                }
+            }
+        }
+
+        private void HandleGetSimplePages(ZipArchive zip, XenonCMSContext DB)
+        {
+            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
+
+            // Handle the pages files
+            var PagesFiles = zip.Entries.Where(x => (x.FullName.StartsWith("data/pages/") || x.FullName.StartsWith("pages/")) && (Path.GetExtension(x.Name) == ".xml"));
+            foreach (var PagesFile in PagesFiles)
+            {
+                // Open the file for reading
+                using (var InStream = PagesFile.Open())
+                {
+                    // Read each byte and convert to xml string
+                    var InBytes = new List<byte>();
+                    while (true)
+                    {
+                        var InByte = InStream.ReadByte();
+                        if (InByte == -1)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            InBytes.Add((byte)InByte);
+                        }
+                    }
+                    var Xml = Encoding.UTF8.GetString(InBytes.ToArray());
+
+                    // Parse the xml string
+                    XmlDocument XmlDoc = new XmlDocument();
+                    XmlDoc.LoadXml(Xml);
+
+                    // Check if the page exists TODO Test with a parent
+                    string Parent = XmlDoc.DocumentElement.SelectSingleNode("parent").InnerText;
+                    string Url = XmlDoc.DocumentElement.SelectSingleNode("url").InnerText;
+                    string Slug = string.IsNullOrWhiteSpace(Parent) ? Url : Parent + "/" + Url;
+                    if ((Slug == "blog") || (Slug == "contact") || (Slug == "news"))
+                    {
+                        // TODO Skipping these built-ins
+                    }
+                    else
+                    {
+                        var Page = DB.SitePages.SingleOrDefault(x => (x.Site.Domain == RequestDomain) && (x.Slug == Slug));
+                        if (Page == null)
+                        {
+                            DB.SitePages.Add(new SitePage()
+                            {
+                                // TODO "meta" tag, 
+                                DateAdded = Convert.ToDateTime(XmlDoc.DocumentElement.SelectSingleNode("pubDate").InnerText),
+                                DateLastUpdated = Convert.ToDateTime(XmlDoc.DocumentElement.SelectSingleNode("pubDate").InnerText),
+                                DisplayOrder = Convert.ToInt32(XmlDoc.DocumentElement.SelectSingleNode("menuOrder").InnerText),
+                                Html = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("content").InnerText),
+                                Layout = "NormalNoSidebar", // TODO there is a "template" tag
+                                ParentId = 0, // TODO there is a "parent" tag
+                                RequireAdmin = false, // TODO "private" tag
+                                RightAlign = false,
+                                ShowInMenu = (XmlDoc.DocumentElement.SelectSingleNode("menuStatus").InnerText == "Y"),
+                                ShowTitleOnPage = true,
+                                SiteId = SiteId,
+                                Slug = Slug,
+                                Text = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("menu").InnerText), // TODO Rename text to something more intuitive
+                                Title = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("title").InnerText)
+                            });
+                            DB.SaveChanges();
+                            DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
+                        }
+                        else
+                        {
+                            // TODO Skipping page, slug already exists
+                        }
+                    }
                 }
             }
         }
