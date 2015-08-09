@@ -176,6 +176,12 @@ namespace XenonCMS.Helpers
             httpContext.Cache.Remove(CacheKey);
         }
 
+        static public void ResetSite(HttpContextBase httpContext)
+        {
+            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string CacheKey = "Site-" + RequestDomain;
+            httpContext.Cache.Remove(CacheKey);
+        }
 
         #region BlogDetails
         internal static string _BlogDetailsKey = "BlogDetails-";

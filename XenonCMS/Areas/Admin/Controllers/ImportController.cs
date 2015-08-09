@@ -35,10 +35,10 @@ namespace XenonCMS.Areas.Admin.Controllers
                     {
                         using (var Zip = new ZipArchive(file.InputStream))
                         {
-                            //HandleGetSimpleBootstrap3SettingsXml(Zip, DB);
+                            HandleGetSimpleBootstrap3SettingsXml(Zip, DB);
                             HandleGetSimpleNewsManagerPosts(Zip, DB);
                             HandleGetSimplePages(Zip, DB);
-                            //HandleGetSimpleWebsiteXml(Zip, DB);
+                            HandleGetSimpleWebsiteXml(Zip, DB);
                         }
                     }
                 }
@@ -56,7 +56,7 @@ namespace XenonCMS.Areas.Admin.Controllers
         {
             var Result = new Dictionary<string, XmlDocument>();
 
-            var ZAEs = zip.Entries.Where(x => (x.FullName.StartsWith("data/posts/") || x.FullName.StartsWith("posts/")) && (Path.GetExtension(x.Name) == ".xml"));
+            var ZAEs = zip.Entries.Where(x => (x.FullName.StartsWith("data/" + startsWith) || x.FullName.StartsWith(startsWith)) && (Path.GetExtension(x.Name) == ".xml"));
             foreach (var ZAE in ZAEs)
             {
                 // Open the file for reading
@@ -74,12 +74,30 @@ namespace XenonCMS.Areas.Admin.Controllers
                     // Parse the xml string
                     XmlDocument XmlDoc = new XmlDocument();
                     XmlDoc.LoadXml(Encoding.UTF8.GetString(InBytes.ToArray()));
-
                     Result.Add(ZAE.FullName, XmlDoc);
                 }
             }
 
             return Result;
+        }
+
+        private void HandleGetSimpleBootstrap3SettingsXml(ZipArchive zip, XenonCMSContext DB)
+        {
+            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+
+            // Handle the Bootstrap3Settings.xml file
+            var Bootstrap3SettingsXmlFile = GetSimpleGetXmlDocuments(zip, "other/Bootstrap3Settings.xml");
+            foreach (var KVP in Bootstrap3SettingsXmlFile)
+            {
+                var Site = DB.Sites.Single(x => x.Domain == RequestDomain);
+                Site.ContactEmail = KVP.Value.DocumentElement.SelectSingleNode("ContactEmail").InnerText;
+                // TODO GetSimple has DisplayOtherThemes
+                Site.NavBarInverted = (KVP.Value.DocumentElement.SelectSingleNode("InvertNavigationBar").InnerText == "true");
+                Site.Theme = KVP.Value.DocumentElement.SelectSingleNode("SelectedTheme").InnerText;
+                // TODO GetSimple has TrackingId
+                DB.SaveChanges();
+                DatabaseCache.ResetSite(ControllerContext.RequestContext.HttpContext);
+            }
         }
 
         private void HandleGetSimpleNewsManagerPosts(ZipArchive zip, XenonCMSContext DB)
@@ -149,6 +167,21 @@ namespace XenonCMS.Areas.Admin.Controllers
                     DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
                     DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, Slug);
                 }
+            }
+        }
+
+        private void HandleGetSimpleWebsiteXml(ZipArchive zip, XenonCMSContext DB)
+        {
+            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+
+            // Handle the Bootstrap3Settings.xml file
+            var Bootstrap3SettingsXmlFile = GetSimpleGetXmlDocuments(zip, "other/website.xml");
+            foreach (var KVP in Bootstrap3SettingsXmlFile)
+            {
+                var Site = DB.Sites.Single(x => x.Domain == RequestDomain);
+                Site.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("SITENAME").InnerText);
+                DB.SaveChanges();
+                DatabaseCache.ResetSite(ControllerContext.RequestContext.HttpContext);
             }
         }
         #endregion
