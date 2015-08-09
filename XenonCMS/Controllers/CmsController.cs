@@ -104,7 +104,7 @@ namespace XenonCMS.Controllers
                         SiteBlogPost NewBlogPost = new SiteBlogPost();
                         NewBlogPost.DateLastUpdated = DateTime.Now;
                         NewBlogPost.DatePosted = DateTime.Now;
-                        NewBlogPost.PreviewText = "XenonCMS has been successfully installed and is ready for use on " + RequestDomain + "!";
+                        NewBlogPost.FullPostText = "XenonCMS has been successfully installed and is ready for use on " + RequestDomain + "!";
                         NewBlogPost.Slug = "xenoncms-installed";
                         NewBlogPost.Title = "XenonCMS Installed";
                         Site.BlogPosts.Add(NewBlogPost);

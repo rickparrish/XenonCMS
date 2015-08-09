@@ -35,8 +35,10 @@ namespace XenonCMS.Areas.Admin.Controllers
                     {
                         using (var Zip = new ZipArchive(file.InputStream))
                         {
+                            //HandleGetSimpleBootstrap3SettingsXml(Zip, DB);
                             HandleGetSimpleNewsManagerPosts(Zip, DB);
                             HandleGetSimplePages(Zip, DB);
+                            //HandleGetSimpleWebsiteXml(Zip, DB);
                         }
                     }
                 }
@@ -50,19 +52,15 @@ namespace XenonCMS.Areas.Admin.Controllers
         }
 
         #region GetSimple Helper Methods
-        private void HandleGetSimpleNewsManagerPosts(ZipArchive zip, XenonCMSContext DB)
+        private Dictionary<string, XmlDocument> GetSimpleGetXmlDocuments(ZipArchive zip, string startsWith)
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
-            int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
+            var Result = new Dictionary<string, XmlDocument>();
 
-            // Handle the NewsManager posts files
-            var PostsFiles = zip.Entries.Where(x => (x.FullName.StartsWith("data/posts/") || x.FullName.StartsWith("posts/")) && (Path.GetExtension(x.Name) == ".xml"));
-            foreach (var PostsFile in PostsFiles)
+            var ZAEs = zip.Entries.Where(x => (x.FullName.StartsWith("data/posts/") || x.FullName.StartsWith("posts/")) && (Path.GetExtension(x.Name) == ".xml"));
+            foreach (var ZAE in ZAEs)
             {
-                string Slug = Path.GetFileNameWithoutExtension(PostsFile.Name);
-
                 // Open the file for reading
-                using (var InStream = PostsFile.Open())
+                using (var InStream = ZAE.Open())
                 {
                     // Read each byte and convert to xml string
                     var InBytes = new List<byte>();
@@ -77,18 +75,35 @@ namespace XenonCMS.Areas.Admin.Controllers
                     XmlDocument XmlDoc = new XmlDocument();
                     XmlDoc.LoadXml(Encoding.UTF8.GetString(InBytes.ToArray()));
 
-                    // Update existing or add new post
-                    var SBP = DB.SiteBlogPosts.SingleOrDefault(x => (x.Site.Domain == RequestDomain) && (x.Slug == Slug)) ?? new SiteBlogPost();
-                    SBP.DateLastUpdated = Convert.ToDateTime(XmlDoc.DocumentElement.SelectSingleNode("date").InnerText);
-                    SBP.DatePosted = Convert.ToDateTime(XmlDoc.DocumentElement.SelectSingleNode("date").InnerText);
-                    SBP.FullPostText = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("content").InnerText);
-                    SBP.SiteId = SiteId;
-                    SBP.Slug = Slug;
-                    SBP.Title = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("title").InnerText);
-                    if (SBP.Id <= 0) DB.SiteBlogPosts.Add(SBP);
-                    DB.SaveChanges();
-                    DatabaseCache.ResetBlogIndex(ControllerContext.RequestContext.HttpContext);
+                    Result.Add(ZAE.FullName, XmlDoc);
                 }
+            }
+
+            return Result;
+        }
+
+        private void HandleGetSimpleNewsManagerPosts(ZipArchive zip, XenonCMSContext DB)
+        {
+            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
+
+            // Handle the NewsManager posts files
+            var PostsFiles = GetSimpleGetXmlDocuments(zip, "posts/");
+            foreach (var KVP in PostsFiles)
+            {
+                // Update existing or add new post
+                // TODO GetSimple has a "tags" tag
+                string Slug = Path.GetFileNameWithoutExtension(KVP.Key);
+                var SBP = DB.SiteBlogPosts.SingleOrDefault(x => (x.Site.Domain == RequestDomain) && (x.Slug == Slug)) ?? new SiteBlogPost();
+                SBP.DateLastUpdated = Convert.ToDateTime(KVP.Value.DocumentElement.SelectSingleNode("date").InnerText);
+                SBP.DatePosted = Convert.ToDateTime(KVP.Value.DocumentElement.SelectSingleNode("date").InnerText);
+                SBP.FullPostText = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("content").InnerText);
+                SBP.SiteId = SiteId;
+                SBP.Slug = Slug;
+                SBP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
+                if (SBP.Id <= 0) DB.SiteBlogPosts.Add(SBP);
+                DB.SaveChanges();
+                DatabaseCache.ResetBlogIndex(ControllerContext.RequestContext.HttpContext);
             }
         }
 
@@ -98,59 +113,41 @@ namespace XenonCMS.Areas.Admin.Controllers
             int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
 
             // Handle the pages files
-            var PagesFiles = zip.Entries.Where(x => (x.FullName.StartsWith("data/pages/") || x.FullName.StartsWith("pages/")) && (Path.GetExtension(x.Name) == ".xml"));
-            foreach (var PagesFile in PagesFiles)
+            var PagesFiles = GetSimpleGetXmlDocuments(zip, "pages/");
+            foreach (var KVP in PagesFiles)
             {
-                // Open the file for reading
-                using (var InStream = PagesFile.Open())
+                // Get slug so we can skip built-in pages
+                string Parent = KVP.Value.DocumentElement.SelectSingleNode("parent").InnerText;
+                string Url = KVP.Value.DocumentElement.SelectSingleNode("url").InnerText;
+                string Slug = string.IsNullOrWhiteSpace(Parent) ? Url : Parent + "/" + Url;
+                if (Slug == "index") Slug = "home";
+                if ((Slug == "blog") || (Slug == "contact") || (Slug == "news"))
                 {
-                    // Read each byte and convert to xml string
-                    var InBytes = new List<byte>();
-                    while (true)
-                    {
-                        var InByte = InStream.ReadByte();
-                        if (InByte == -1) break;
-                        InBytes.Add((byte)InByte);
-                    }
-
-                    // Parse the xml string
-                    XmlDocument XmlDoc = new XmlDocument();
-                    XmlDoc.LoadXml(Encoding.UTF8.GetString(InBytes.ToArray()));
-
-                    // Check if the page exists TODO Test with a parent
-                    string Parent = XmlDoc.DocumentElement.SelectSingleNode("parent").InnerText;
-                    string Url = XmlDoc.DocumentElement.SelectSingleNode("url").InnerText;
-                    string Slug = string.IsNullOrWhiteSpace(Parent) ? Url : Parent + "/" + Url;
-                    if ((Slug == "blog") || (Slug == "contact") || (Slug == "news"))
-                    {
-                        // TODO Skipping these built-ins
-                    }
-                    else
-                    {
-                        if (Slug == "index") Slug = "home";
-
-                        // Update existing or add new page
-                        var SP = DB.SitePages.SingleOrDefault(x => (x.Site.Domain == RequestDomain) && (x.Slug == Slug)) ?? new SitePage();
-                        // TODO "meta" tag, 
-                        SP.DateAdded = Convert.ToDateTime(XmlDoc.DocumentElement.SelectSingleNode("pubDate").InnerText);
-                        SP.DateLastUpdated = Convert.ToDateTime(XmlDoc.DocumentElement.SelectSingleNode("pubDate").InnerText);
-                        SP.DisplayOrder = Convert.ToInt32(XmlDoc.DocumentElement.SelectSingleNode("menuOrder").InnerText);
-                        SP.Html = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("content").InnerText);
-                        SP.Layout = "NormalNoSidebar"; // TODO there is a "template" tag
-                        SP.ParentId = 0; // TODO there is a "parent" tag
-                        SP.RequireAdmin = false; // TODO "private" tag
-                        SP.RightAlign = false;
-                        SP.ShowInMenu = (XmlDoc.DocumentElement.SelectSingleNode("menuStatus").InnerText == "Y");
-                        SP.ShowTitleOnPage = true;
-                        SP.SiteId = SiteId;
-                        SP.Slug = Slug;
-                        SP.Text = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename text to something more intuitive
-                        SP.Title = HttpUtility.HtmlDecode(XmlDoc.DocumentElement.SelectSingleNode("title").InnerText);
-                        if (SP.Id <= 0) DB.SitePages.Add(SP);
-                        DB.SaveChanges();
-                        DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
-                        DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, Slug);
-                    }
+                    // TODO Skipping these built-ins
+                }
+                else
+                {
+                    // Update existing or add new page
+                    // TODO GetSimple has a "meta" tag, 
+                    var SP = DB.SitePages.SingleOrDefault(x => (x.Site.Domain == RequestDomain) && (x.Slug == Slug)) ?? new SitePage();
+                    SP.DateAdded = Convert.ToDateTime(KVP.Value.DocumentElement.SelectSingleNode("pubDate").InnerText);
+                    SP.DateLastUpdated = Convert.ToDateTime(KVP.Value.DocumentElement.SelectSingleNode("pubDate").InnerText);
+                    SP.DisplayOrder = Convert.ToInt32(KVP.Value.DocumentElement.SelectSingleNode("menuOrder").InnerText);
+                    SP.Html = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("content").InnerText);
+                    SP.Layout = "NormalNoSidebar"; // TODO there is a "template" tag
+                    SP.ParentId = 0; // TODO there is a "parent" tag
+                    SP.RequireAdmin = false; // TODO "private" tag
+                    SP.RightAlign = false;
+                    SP.ShowInMenu = (KVP.Value.DocumentElement.SelectSingleNode("menuStatus").InnerText == "Y");
+                    SP.ShowTitleOnPage = true;
+                    SP.SiteId = SiteId;
+                    SP.Slug = Slug;
+                    SP.Text = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename text to something more intuitive
+                    SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
+                    if (SP.Id <= 0) DB.SitePages.Add(SP);
+                    DB.SaveChanges();
+                    DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
+                    DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, Slug);
                 }
             }
         }
