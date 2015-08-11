@@ -2,9 +2,11 @@
 // TODO Every time a page is updated, put it in a history table so old versions can be restored
 // TODO Add ability to import from GetSimple (maybe have import happen at Install time?)
 // TODO Add Edit button to pages if logged in as admin.  After edit is done, return to page.  Need to handle changed slug
+// TODO Maybe don't even need a catch-all for cms urls if rammfar can catch and handle 404s
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using XenonCMS.Helpers;
 using XenonCMS.Models;
@@ -65,7 +67,22 @@ namespace XenonCMS.Controllers
         }
 
         //
-        // GET: /Cmd/Install/
+        // GET: /CmsFile/File/
+        public FilePathResult File(string filename)
+        {
+            string AbsoluteFilename = SiteHelper.AbsoluteFilename(ControllerContext.RequestContext.HttpContext, filename);
+            if (System.IO.File.Exists(AbsoluteFilename))
+            {
+                return File(AbsoluteFilename, MimeMapping.GetMimeMapping(AbsoluteFilename));
+            }
+            else
+            {
+                throw new HttpException(404, "Not found");
+            }
+        }
+
+        //
+        // GET: /Cms/Install/
         public ActionResult Install()
         {
             if (Globals.IsNewSite(ControllerContext.RequestContext.HttpContext))

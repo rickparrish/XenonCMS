@@ -16,7 +16,6 @@ namespace XenonCMS.Helpers
             if ((url == "admin") || (url.StartsWith("admin/"))) return false;
             if ((url == "blog") || (url.StartsWith("blog/"))) return false;
             if ((url == "contact") || (url.StartsWith("contact/"))) return false;
-            if ((url == "images") || (url.StartsWith("images/"))) return false;
 
             // If we get here, we're OK handling it
             return true;

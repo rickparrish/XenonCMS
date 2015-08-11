@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using XenonCMS.Controllers;
+using XenonCMS.Helpers;
 
 namespace XenonCMS
 {
@@ -39,13 +40,29 @@ namespace XenonCMS
             {
                 Response.Clear();
 
-                var rd = new RouteData();
-                rd.DataTokens["area"] = "";
-                rd.Values["controller"] = "Errors";
-                rd.Values["action"] = "NotFound";
+                if (SiteHelper.FileExists(Context.Request.RequestContext.HttpContext, Request.FilePath))
+                {
+                    var rd = new RouteData();
+                    rd.DataTokens["area"] = "";
+                    rd.Values["controller"] = "Cms";
+                    rd.Values["action"] = "File";
+                    rd.Values["filename"] = Request.FilePath;
 
-                IController c = new ErrorsController();
-                c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
+                    IController c = new CmsController();
+                    c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
+
+                    Context.Response.StatusCode = 200;
+                }
+                else
+                {
+                    var rd = new RouteData();
+                    rd.DataTokens["area"] = "";
+                    rd.Values["controller"] = "Errors";
+                    rd.Values["action"] = "NotFound";
+
+                    IController c = new ErrorsController();
+                    c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
+                }
             }
             else if (Context.Response.StatusCode == 500)
             {
@@ -63,7 +80,21 @@ namespace XenonCMS
                 }
             }
         }
-        
+
+        protected void Application_Error()
+        {
+            var LastError = Server.GetLastError();
+            if (LastError is HttpException)
+            {
+                if (((HttpException)LastError).GetHttpCode() == 404)
+                {
+                    // Send us a 404 message, but then return so the standard 404 error message will display
+                    //Logging.LogException(Nothing, "<h2>404</h2><p>" & Request.Url.AbsolutePath & "</p>")
+                    return;
+                }
+            }
+        }
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();

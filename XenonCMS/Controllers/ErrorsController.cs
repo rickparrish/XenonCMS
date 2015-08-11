@@ -21,6 +21,9 @@ namespace XenonCMS.Controllers
 
         public ActionResult NotFound()
         {
+            // TODO Does this work?  If so, add for above functions too
+            Response.StatusCode = 404;
+            Response.TrySkipIisCustomErrors = true;
             return View();
         }
     }

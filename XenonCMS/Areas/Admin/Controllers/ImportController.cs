@@ -39,7 +39,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                             HandleGetSimpleNewsManagerPosts(Zip, DB);
                             HandleGetSimplePages(Zip, DB);
                             HandleGetSimpleWebsiteXml(Zip, DB);
-                            // TODO Handle uploads (file to /Files (need to handle like Images) and screenshots to /Images/Screenshots)
+                            // TODO Handle uploads (put in /SiteFiles)
                         }
                     }
                 }

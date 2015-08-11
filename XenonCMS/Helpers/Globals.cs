@@ -156,9 +156,10 @@ namespace XenonCMS.Helpers
                 // Save the image to disk
                 string Extension = "." + Regex.Match(M.Value, "data:([^/]+)/([a-z]+);base64").Groups[2].Value;
                 if (string.IsNullOrWhiteSpace(Extension)) Extension = ".png"; // Default to .png if no extension was found
-                string Filename = HostingEnvironment.MapPath("~/Images/" + GetRequestDomain(httpContext) + "/" + ImageId + Extension);
-                Directory.CreateDirectory(Path.GetDirectoryName(Filename));
-                File.WriteAllBytes(Filename, ImageBytes);
+                if (Extension == ".jpeg") Extension = ".jpg";
+                string AbsoluteFilename = SiteHelper.AbsoluteFilename(httpContext, ImageId + Extension, "Images");
+                Directory.CreateDirectory(Path.GetDirectoryName(AbsoluteFilename));
+                File.WriteAllBytes(AbsoluteFilename, ImageBytes);
 
                 // Update the html to include a link instead of data: uri
                 html = new Regex("src=\"(data:([^\"]+))\"").Replace(html, "src=\"" + VirtualPathUtility.ToAbsolute("~/Images/" + ImageId + Extension) + "\" alt=\"\"", 1);

@@ -490,7 +490,6 @@
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CmsController.cs" />
     <Compile Include="Controllers\ContactController.cs" />
-    <Compile Include="Controllers\ImagesController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -502,6 +501,7 @@
     <Compile Include="Helpers\SiteAdminIPAuthorizeAttribute.cs" />
     <Compile Include="Helpers\LayoutHelper.cs" />
     <Compile Include="Helpers\ModelConverter.cs" />
+    <Compile Include="Helpers\SiteHelper.cs" />
     <Compile Include="Migrations\201403210041232_Create.cs" />
     <Compile Include="Migrations\201403210041232_Create.Designer.cs">
       <DependentUpon>201403210041232_Create.cs</DependentUpon>

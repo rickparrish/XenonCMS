@@ -25,17 +25,16 @@ namespace XenonCMS
             );
 
             routes.MapRoute(
+                name: "CmsFile",
+                url: "CmsFile/{*filename}",
+                defaults: new { controller = "Cms", action = "File" }
+            );
+
+            routes.MapRoute(
                 name: "BlogPost",
                 url: "Blog/{id}/{year}/{month}/{day}/{slug}",
                 defaults: new { controller = "Blog", action = "Details", year = UrlParameter.Optional, month = UrlParameter.Optional, day = UrlParameter.Optional, slug = UrlParameter.Optional },
                 constraints: new { controller = "Blog", id = @"\d*" }
-            );
-
-            routes.MapRoute(
-                name: "Image",
-                url: "Images/{filename}",
-                defaults: new { controller = "Images", action = "Image" },
-                constraints: new { controller = "Images" }
             );
 
             routes.MapRoute(
