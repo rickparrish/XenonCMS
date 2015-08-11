@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -40,29 +41,39 @@ namespace XenonCMS
             {
                 Response.Clear();
 
+                // TODO Maybe handle CMS pages here too?  ie look for slug and execute controller action if slug is valid
+
                 if (SiteHelper.FileExists(Context.Request.RequestContext.HttpContext, Request.FilePath))
                 {
-                    var rd = new RouteData();
-                    rd.DataTokens["area"] = "";
-                    rd.Values["controller"] = "Cms";
-                    rd.Values["action"] = "File";
-                    rd.Values["filename"] = Request.FilePath;
+                    var FileRD = new RouteData();
+                    FileRD.DataTokens["area"] = "";
+                    FileRD.Values["controller"] = "Cms";
+                    FileRD.Values["action"] = "File";
+                    FileRD.Values["filename"] = Request.FilePath;
 
-                    IController c = new CmsController();
-                    c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
-
-                    Context.Response.StatusCode = 200;
+                    try
+                    {
+                        IController FileC = new CmsController();
+                        FileC.Execute(new RequestContext(new HttpContextWrapper(Context), FileRD));
+                        Context.Response.StatusCode = 200;
+                        return;
+                    }
+                    catch (Exception)
+                    {
+                        // 404 on file handler, fall through to friendly 404 below
+                        // TODO Log the exception
+                        // TODO Shouldn't fall through as 404 since we confirmed it existed above, what error should it be, 500?
+                    }
                 }
-                else
-                {
-                    var rd = new RouteData();
-                    rd.DataTokens["area"] = "";
-                    rd.Values["controller"] = "Errors";
-                    rd.Values["action"] = "NotFound";
 
-                    IController c = new ErrorsController();
-                    c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
-                }
+                // If we get here the file handler failed, so show a friendly 404
+                var rd = new RouteData();
+                rd.DataTokens["area"] = "";
+                rd.Values["controller"] = "Errors";
+                rd.Values["action"] = "NotFound";
+
+                IController c = new ErrorsController();
+                c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
             }
             else if (Context.Response.StatusCode == 500)
             {
