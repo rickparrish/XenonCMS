@@ -13,7 +13,7 @@ namespace XenonCMS.Areas.Admin.Controllers
     [SiteAdminIPAuthorize]
     public class PagesController : Controller
     {
-        private XenonCMSContext db = new XenonCMSContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: /Admin/Pages/
         public ActionResult Index()

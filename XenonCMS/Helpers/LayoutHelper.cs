@@ -20,7 +20,7 @@ namespace XenonCMS.Helpers
                 Result = new List<NavMenuItem>();
                 string RequestDomain = Globals.GetRequestDomain(httpContext);
 
-                using (XenonCMSContext DB = new XenonCMSContext())
+                using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     // Get nav menu
                     var NavMenuItems = DB.SitePages.Where(x => (x.Site.Domain == RequestDomain) && x.ShowInMenu && (x.ParentId == 0) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text).ToArray();
@@ -57,7 +57,7 @@ namespace XenonCMS.Helpers
             {
                 string RequestDomain = Globals.GetRequestDomain(httpContext);
 
-                using (XenonCMSContext DB = new XenonCMSContext())
+                using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     // Get site title
                     Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
@@ -123,7 +123,7 @@ namespace XenonCMS.Helpers
             {
                 string RequestDomain = Globals.GetRequestDomain(httpContext);
 
-                using (XenonCMSContext DB = new XenonCMSContext())
+                using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     // Get site side bar
                     var Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
@@ -151,7 +151,7 @@ namespace XenonCMS.Helpers
             {
                 string RequestDomain = Globals.GetRequestDomain(httpContext);
 
-                using (XenonCMSContext DB = new XenonCMSContext())
+                using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     // Get site title
                     Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
@@ -177,7 +177,7 @@ namespace XenonCMS.Helpers
             {
                 string RequestDomain = Globals.GetRequestDomain(httpContext);
 
-                using (XenonCMSContext DB = new XenonCMSContext())
+                using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     // Get site title
                     Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);

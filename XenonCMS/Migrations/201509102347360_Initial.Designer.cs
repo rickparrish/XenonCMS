@@ -7,13 +7,13 @@ namespace XenonCMS.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class CascadeDeletechanges : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CascadeDeletechanges));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201508082241598_CascadeDelete changes"; }
+            get { return "201509102347360_Initial"; }
         }
         
         string IMigrationMetadata.Source

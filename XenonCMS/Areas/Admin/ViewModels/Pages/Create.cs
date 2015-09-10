@@ -46,7 +46,7 @@ namespace XenonCMS.Areas.Admin.ViewModels.Pages
             Layouts = new SelectList(LayoutItems, "LayoutName", "LayoutDescription");
         }
 
-        internal void GetParents(Models.XenonCMSContext db)
+        internal void GetParents(Models.ApplicationDbContext db)
         {
             var ParentItems = db.SitePages.Where(x => x.ParentId == 0).OrderBy(x => x.Text).ToList();
 

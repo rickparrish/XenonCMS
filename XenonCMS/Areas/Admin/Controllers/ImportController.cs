@@ -31,7 +31,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             {
                 try
                 {
-                    using (var DB = new XenonCMSContext())
+                    using (var DB = new ApplicationDbContext())
                     {
                         using (var Zip = new ZipArchive(file.InputStream))
                         {
@@ -82,7 +82,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             return Result;
         }
 
-        private void HandleGetSimpleBootstrap3SettingsXml(ZipArchive zip, XenonCMSContext DB)
+        private void HandleGetSimpleBootstrap3SettingsXml(ZipArchive zip, ApplicationDbContext DB)
         {
             string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
 
@@ -101,7 +101,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             }
         }
 
-        private void HandleGetSimpleNewsManagerPosts(ZipArchive zip, XenonCMSContext DB)
+        private void HandleGetSimpleNewsManagerPosts(ZipArchive zip, ApplicationDbContext DB)
         {
             string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
             int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
@@ -126,7 +126,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             }
         }
 
-        private void HandleGetSimplePages(ZipArchive zip, XenonCMSContext DB)
+        private void HandleGetSimplePages(ZipArchive zip, ApplicationDbContext DB)
         {
             string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
             int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
@@ -186,7 +186,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             }
         }
 
-        private void HandleGetSimpleWebsiteXml(ZipArchive zip, XenonCMSContext DB)
+        private void HandleGetSimpleWebsiteXml(ZipArchive zip, ApplicationDbContext DB)
         {
             string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
 

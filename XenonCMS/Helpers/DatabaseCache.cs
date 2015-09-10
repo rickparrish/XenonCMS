@@ -192,7 +192,7 @@ namespace XenonCMS.Helpers
             httpContext.Cache.Add(CacheKey, blogPost, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Normal, null);
         }
 
-        internal static ViewModels.Blog.Details GetBlogDetails(int id, XenonCMSContext db, HttpContextBase httpContext)
+        internal static ViewModels.Blog.Details GetBlogDetails(int id, ApplicationDbContext db, HttpContextBase httpContext)
         {
             // Pull from cache
             string RequestDomain = Globals.GetRequestDomain(httpContext);
@@ -233,7 +233,7 @@ namespace XenonCMS.Helpers
             httpContext.Cache.Add(CacheKey, blogPosts, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Normal, null);
         }
 
-        internal static List<ViewModels.Blog.Index> GetBlogIndex(XenonCMSContext db, HttpContextBase httpContext)
+        internal static List<ViewModels.Blog.Index> GetBlogIndex(ApplicationDbContext db, HttpContextBase httpContext)
         {
             // Pull from cache
             string RequestDomain = Globals.GetRequestDomain(httpContext);

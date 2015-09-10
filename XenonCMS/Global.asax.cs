@@ -22,8 +22,7 @@ namespace XenonCMS
                 rd.Values["controller"] = "Errors";
                 rd.Values["action"] = "BadRequest";
 
-                IController c = new ErrorsController();
-                c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
+                ((IController)new ErrorsController()).Execute(new RequestContext(new HttpContextWrapper(Context), rd));
             }
             else if (Context.Response.StatusCode == 403)
             {
@@ -34,16 +33,34 @@ namespace XenonCMS
                 rd.Values["controller"] = "Errors";
                 rd.Values["action"] = "NotAuthorized";
 
-                IController c = new ErrorsController();
-                c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
+                ((IController)new ErrorsController()).Execute(new RequestContext(new HttpContextWrapper(Context), rd));
             }
             else if (Context.Response.StatusCode == 404)
             {
                 Response.Clear();
 
-                // TODO Maybe handle CMS pages here too?  ie look for slug and execute controller action if slug is valid
+                if (SiteHelper.SlugExists(Context.Request.RequestContext.HttpContext, Request.FilePath))
+                {
+                    var SlugRD = new RouteData();
+                    SlugRD.DataTokens["area"] = "";
+                    SlugRD.Values["controller"] = "Cms";
+                    SlugRD.Values["action"] = "Slug";
+                    SlugRD.Values["slug"] = Request.FilePath;
 
-                if (SiteHelper.FileExists(Context.Request.RequestContext.HttpContext, Request.FilePath))
+                    try
+                    {
+                        Context.Response.StatusCode = 200;
+                        throw new Exception("asdf");
+                        ((IController)new CmsController()).Execute(new RequestContext(new HttpContextWrapper(Context), SlugRD));
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO Log the exception
+                        Context.Response.StatusCode = 500;
+                    }
+                }
+                else if (SiteHelper.FileExists(Context.Request.RequestContext.HttpContext, Request.FilePath))
                 {
                     var FileRD = new RouteData();
                     FileRD.DataTokens["area"] = "";
@@ -53,16 +70,14 @@ namespace XenonCMS
 
                     try
                     {
-                        IController FileC = new CmsController();
-                        FileC.Execute(new RequestContext(new HttpContextWrapper(Context), FileRD));
                         Context.Response.StatusCode = 200;
+                        ((IController)new CmsController()).Execute(new RequestContext(new HttpContextWrapper(Context), FileRD));
                         return;
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // 404 on file handler, fall through to friendly 404 below
                         // TODO Log the exception
-                        // TODO Shouldn't fall through as 404 since we confirmed it existed above, what error should it be, 500?
+                        Context.Response.StatusCode = 500;
                     }
                 }
 
@@ -70,10 +85,9 @@ namespace XenonCMS
                 var rd = new RouteData();
                 rd.DataTokens["area"] = "";
                 rd.Values["controller"] = "Errors";
-                rd.Values["action"] = "NotFound";
+                rd.Values["action"] = (Response.StatusCode == 404) ? "NotFound" : "InternalServerError"; // Slug and File handlers may have thrown a 500 above
 
-                IController c = new ErrorsController();
-                c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
+                ((IController)new ErrorsController()).Execute(new RequestContext(new HttpContextWrapper(Context), rd));
             }
             else if (Context.Response.StatusCode == 500)
             {
@@ -86,8 +100,7 @@ namespace XenonCMS
                     rd.Values["controller"] = "Errors";
                     rd.Values["action"] = "InternalServerError";
 
-                    IController c = new ErrorsController();
-                    c.Execute(new RequestContext(new HttpContextWrapper(Context), rd));
+                    ((IController)new ErrorsController()).Execute(new RequestContext(new HttpContextWrapper(Context), rd));
                 }
             }
         }

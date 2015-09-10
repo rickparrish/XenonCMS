@@ -3,6 +3,7 @@
 // TODO Add ability to import from GetSimple (maybe have import happen at Install time?)
 // TODO Add Edit button to pages if logged in as admin.  After edit is done, return to page.  Need to handle changed slug
 // TODO Maybe don't even need a catch-all for cms urls if rammfar can catch and handle 404s
+// TODO Log 404s so then a dashboard page can be created showing common 404s.  Add option to ignore certain ones (ie maybe want to ignore robots.txt or favicon.ico instead of putting one in place)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,27 +19,31 @@ namespace XenonCMS.Controllers
     {
         //
         // GET: /Cms/
-        public ActionResult Index(string url)
+        public ActionResult Slug(string slug)
         {
             // Clean up the url parameter
-            if (string.IsNullOrWhiteSpace(url))
+            if (string.IsNullOrWhiteSpace(slug))
             {
-                url = "home";
+                slug = "home";
             }
             else
             {
-                url = url.ToLower().Trim('/');
-                if (url.EndsWith("/index")) url = url.Substring(0, url.LastIndexOf("/"));
+                slug = slug.ToLower().Trim('/');
+                if (slug.EndsWith("/index")) slug = slug.Substring(0, slug.LastIndexOf("/"));
+                if (string.IsNullOrWhiteSpace(slug))
+                {
+                    slug = "home";
+                }
             }
 
             // Check if we cached the page
-            SitePage Page = DatabaseCache.GetSitePage(ControllerContext.RequestContext.HttpContext, url);
+            SitePage Page = DatabaseCache.GetSitePage(ControllerContext.RequestContext.HttpContext, slug);
             if (Page == null)
             {
                 string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
-                using (XenonCMSContext DB = new XenonCMSContext())
+                using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
-                    Page = DB.SitePages.SingleOrDefault(x => (x.Slug == url) && (x.Site.Domain == RequestDomain));
+                    Page = DB.SitePages.SingleOrDefault(x => (x.Slug == slug) && (x.Site.Domain == RequestDomain));
                 }
                 DatabaseCache.AddSitePage(ControllerContext.RequestContext.HttpContext, Page);
             }
@@ -106,7 +111,7 @@ namespace XenonCMS.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    using (XenonCMSContext DB = new XenonCMSContext())
+                    using (ApplicationDbContext DB = new ApplicationDbContext())
                     {
                         string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
                         Site Site = new Site();

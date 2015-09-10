@@ -24,7 +24,7 @@ namespace XenonCMS.Helpers
 
                 try
                 {
-                    using (XenonCMSContext DB = new XenonCMSContext())
+                    using (ApplicationDbContext DB = new ApplicationDbContext())
                     {
                         // Global admin ips
                         foreach (var Row in DB.GlobalAdminIPs)
@@ -119,7 +119,7 @@ namespace XenonCMS.Helpers
             if (Site == null)
             {
                 string RequestDomain = GetRequestDomain(httpContext);
-                using (XenonCMSContext DB = new XenonCMSContext())
+                using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
                 }

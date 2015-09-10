@@ -11,7 +11,7 @@ namespace XenonCMS.Controllers
 {
     public class BlogController : Controller
     {
-        private XenonCMSContext db = new XenonCMSContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: /Blog/
         public ActionResult Index()

@@ -11,30 +11,29 @@ namespace XenonCMS
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                name: "CmsInstall",
-                url: "Cms/Install",
-                defaults: new { controller = "Cms", action = "Install" }
-            );
-
-            // http://stackoverflow.com/a/16030904
-            routes.MapRoute(
-                name: "CmsIndex",
-                url: "{*url}",
-                defaults: new { controller = "Cms", action = "Index" },
-                constraints: new { url = new CmsUrlConstraint() }
-            );
-
-            routes.MapRoute(
                 name: "CmsFile",
-                url: "CmsFile/{*filename}",
+                url: "Cms/File/{*filename}",
                 defaults: new { controller = "Cms", action = "File" }
+            );
+
+            routes.MapRoute(
+                name: "CmsSlug",
+                url: "Cms/Slug/{*slug}",
+                defaults: new { controller = "Cms", action = "Slug" }
             );
 
             routes.MapRoute(
                 name: "BlogPost",
                 url: "Blog/{id}/{year}/{month}/{day}/{slug}",
                 defaults: new { controller = "Blog", action = "Details", year = UrlParameter.Optional, month = UrlParameter.Optional, day = UrlParameter.Optional, slug = UrlParameter.Optional },
-                constraints: new { controller = "Blog", id = @"\d*" }
+                constraints: new { id = @"\d*" }
+            );
+
+            routes.MapRoute(
+                name: "NewsPost",
+                url: "News/{id}/{year}/{month}/{day}/{slug}",
+                defaults: new { controller = "Blog", action = "Details", year = UrlParameter.Optional, month = UrlParameter.Optional, day = UrlParameter.Optional, slug = UrlParameter.Optional },
+                constraints: new { id = @"\d*" }
             );
 
             routes.MapRoute(

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Hosting;
+using XenonCMS.Models;
 
 namespace XenonCMS.Helpers
 {
@@ -34,6 +35,30 @@ namespace XenonCMS.Helpers
             string SiteFilesDirectory = HostingEnvironment.MapPath("~/SiteFiles/" + Globals.GetRequestDomain(httpContext));
             string RequestedFile = Path.Combine(SiteFilesDirectory, filename.Trim('/').Replace('/', '\\'));
             return (RequestedFile.ToLower().StartsWith(SiteFilesDirectory.ToLower()) && File.Exists(RequestedFile));
+        }
+
+        public static bool SlugExists(HttpContextBase httpContext, string slug)
+        {
+            // Clean up the url parameter (TODO Duplicated in Cms/Slug)
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                slug = "home";
+            }
+            else
+            {
+                slug = slug.ToLower().Trim('/');
+                if (slug.EndsWith("/index")) slug = slug.Substring(0, slug.LastIndexOf("/"));
+                if (string.IsNullOrWhiteSpace(slug))
+                {
+                    slug = "home";
+                }
+            }
+
+            // TODO Should have caching for this
+            using (var DB = new ApplicationDbContext())
+            {
+                return DB.SitePages.Where(x => x.Slug.ToLower() == slug.ToLower()).Any();
+            }
         }
     }
 }
