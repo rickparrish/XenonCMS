@@ -84,7 +84,7 @@ namespace XenonCMS.Classes
             if (string.IsNullOrWhiteSpace(CurrentUrl)) CurrentUrl = "home";
 
             // Get database entries
-            List<NavMenuItem> NavMenuItems = GetNavMenuItems(httpContext, Globals.IsUserFromAdminIP(httpContext), rightAlign);
+            List<NavMenuItem> NavMenuItems = GetNavMenuItems(httpContext, httpContext.User.IsInRole("GlobalAdmin") || httpContext.User.IsInRole("SiteAdmin"), rightAlign);
 
             StringBuilder Result = new StringBuilder();
 

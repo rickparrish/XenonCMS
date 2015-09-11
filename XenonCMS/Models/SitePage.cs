@@ -1,4 +1,6 @@
-﻿namespace XenonCMS.Models
+﻿using System;
+
+namespace XenonCMS.Models
 {
     public partial class SitePage
     {
@@ -15,8 +17,8 @@
         public bool RightAlign { get; set; }
         public int DisplayOrder { get; set; }
         public bool RequireAdmin { get; set; }
-        public System.DateTime DateAdded { get; set; }
-        public System.DateTime DateLastUpdated { get; set; }
+        public DateTime DateAdded { get; set; }
+        public DateTime DateLastUpdated { get; set; }
 
         public virtual Site Site { get; set; }
     }

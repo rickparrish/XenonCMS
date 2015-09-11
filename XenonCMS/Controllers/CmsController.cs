@@ -115,13 +115,8 @@ namespace XenonCMS.Controllers
                     {
                         string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
                         Site Site = new Site();
-                        Site.AdminIPs = new List<SiteAdminIP>();
                         Site.BlogPosts = new List<SiteBlogPost>();
                         Site.Pages = new List<SitePage>();
-
-                        SiteAdminIP NewAdminIP = new SiteAdminIP();
-                        NewAdminIP.Address = ControllerContext.RequestContext.HttpContext.Request.UserHostAddress;
-                        Site.AdminIPs.Add(NewAdminIP);
 
                         SiteBlogPost NewBlogPost = new SiteBlogPost();
                         NewBlogPost.DateLastUpdated = DateTime.Now;
@@ -131,7 +126,7 @@ namespace XenonCMS.Controllers
                         NewBlogPost.Title = "XenonCMS Installed";
                         Site.BlogPosts.Add(NewBlogPost);
 
-                        Site.ContactEmail = "contact@" + RequestDomain;
+                        Site.ContactEmail = "website@" + RequestDomain;
                         Site.Domain = RequestDomain;
                         Site.NavBarInverted = false;
 

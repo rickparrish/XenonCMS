@@ -191,6 +191,7 @@
     <Compile Include="Areas\Admin\ViewModels\Pages\Delete.cs" />
     <Compile Include="Areas\Admin\ViewModels\Pages\Create.cs" />
     <Compile Include="Areas\Admin\ViewModels\Pages\Index.cs" />
+    <Compile Include="Classes\ApplicationDbContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CmsController.cs" />
@@ -209,7 +210,7 @@
       <DependentUpon>201509102347360_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\Account\Login.cs" />
     <Compile Include="ViewModels\Blog\Create.cs" />
@@ -220,10 +221,8 @@
     <Compile Include="ViewModels\Cms\Install.cs" />
     <Compile Include="ViewModels\Contact\Index.cs" />
     <Compile Include="Models\SiteBlogPost.cs" />
-    <Compile Include="Models\GlobalAdminIP.cs" />
     <Compile Include="Models\GlobalSidebar.cs" />
     <Compile Include="Models\Site.cs" />
-    <Compile Include="Models\SiteAdminIP.cs" />
     <Compile Include="Models\SiteGlobalSidebar.cs" />
     <Compile Include="Models\SitePage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

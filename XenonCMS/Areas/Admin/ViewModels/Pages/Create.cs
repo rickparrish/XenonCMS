@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
+using XenonCMS.Classes;
 using XenonCMS.Models;
 
 namespace XenonCMS.Areas.Admin.ViewModels.Pages
@@ -46,7 +47,7 @@ namespace XenonCMS.Areas.Admin.ViewModels.Pages
             Layouts = new SelectList(LayoutItems, "LayoutName", "LayoutDescription");
         }
 
-        internal void GetParents(Models.ApplicationDbContext db)
+        internal void GetParents(ApplicationDbContext db)
         {
             var ParentItems = db.SitePages.Where(x => x.ParentId == 0).OrderBy(x => x.Text).ToList();
 

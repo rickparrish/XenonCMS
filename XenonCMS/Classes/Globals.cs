@@ -14,66 +14,6 @@ namespace XenonCMS.Classes
 {
     static public class Globals
     {
-        static private List<string> GetAdminIPs(HttpContextBase httpContext, bool globalOnly)
-        {
-            List<string> Result = DatabaseCache.GetAdminIPs(httpContext, globalOnly);
-            if (Result == null)
-            {
-                Result = new List<string>();
-                string RequestDomain = Globals.GetRequestDomain(httpContext);
-
-                try
-                {
-                    using (ApplicationDbContext DB = new ApplicationDbContext())
-                    {
-                        // Global admin ips
-                        foreach (var Row in DB.GlobalAdminIPs)
-                        {
-                            Result.Add(Row.Address);
-                        }
-
-                        if (!globalOnly)
-                        {
-                            // Site admin ips
-                            foreach (var Row in DB.SiteAdminIPs.Where(x => x.Site.Domain == RequestDomain))
-                            {
-                                Result.Add(Row.Address);
-                            }
-                        }
-                    }
-
-                    // Cache what we have so far, so if the dns lookup is necessary, and takes awhile, we won't have multiple requests doing it
-                    DatabaseCache.AddAdminIPs(httpContext, Result, globalOnly);
-
-                    // Lookup any hostnames and convert to ip address
-                    for (int i = 0; i < Result.Count; i++)
-                    {
-                        if (!Regex.IsMatch(Result[i], @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", RegexOptions.Compiled))
-                        {
-                            // Not in the format of an IP, so convert hostname to IP
-                            try
-                            {
-                                Result[i] = Dns.GetHostAddresses(Result[i])[0].ToString();
-                            }
-                            catch (Exception)
-                            {
-                                // Lookup failed, just ignore
-                            }
-                        }
-                    }
-
-                    // Re-cache, now that we have dns lookups completed
-                    DatabaseCache.AddAdminIPs(httpContext, Result, globalOnly);
-                }
-                catch (Exception)
-                {
-                    // Something failed, just ignore
-                }
-            }
-
-            return Result;
-        }
-
         static public string GetRequestDomain(HttpContextBase httpContext)
         {
             string Result = httpContext.Request.Url.Host.ToLower();
@@ -129,18 +69,6 @@ namespace XenonCMS.Classes
             return (Site == null);
         }
 
-        static public bool IsUserFromAdminIP(HttpContextBase httpContext)
-        {
-            List<string> AdminIPs = GetAdminIPs(httpContext, false);
-            return AdminIPs.Contains(httpContext.Request.UserHostAddress);
-        }
-
-        static public bool IsUserFromGlobalAdminIP(HttpContextBase httpContext)
-        {
-            List<string> AdminIPs = GetAdminIPs(httpContext, true);
-            return AdminIPs.Contains(httpContext.Request.UserHostAddress);
-        }
-        
         // From: https://github.com/madskristensen/MiniBlog
         static public string SaveImagesToDisk(string html, HttpContextBase httpContext)
         {
