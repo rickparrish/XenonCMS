@@ -205,9 +205,9 @@
     <Compile Include="Classes\LayoutHelper.cs" />
     <Compile Include="Classes\ModelConverter.cs" />
     <Compile Include="Classes\SiteHelper.cs" />
-    <Compile Include="Migrations\201509102347360_Initial.cs" />
-    <Compile Include="Migrations\201509102347360_Initial.Designer.cs">
-      <DependentUpon>201509102347360_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201509110112231_Initial.cs" />
+    <Compile Include="Migrations\201509110112231_Initial.Designer.cs">
+      <DependentUpon>201509110112231_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -282,8 +282,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201509102347360_Initial.resx">
-      <DependentUpon>201509102347360_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201509110112231_Initial.resx">
+      <DependentUpon>201509110112231_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
