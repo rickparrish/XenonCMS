@@ -7,7 +7,7 @@
 
 <h2>
     Blog posts
-    @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+    @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
     {
         <text>
             (@Html.ActionLink("add", "Create"))
@@ -46,7 +46,7 @@
                 @Html.RouteLink("Read more...", "BlogPost", item.ToRouteValues())
             }
 
-            @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+            @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
             {
                 <text>
                     | @Html.ActionLink("Edit", "Edit", new { id = item.Id })

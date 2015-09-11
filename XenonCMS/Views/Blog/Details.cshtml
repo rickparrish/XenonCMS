@@ -26,7 +26,7 @@
         @Html.ActionLink("Back to List", "Index")
         | @Html.RouteLink("Permalink", "BlogPost", Model.ToRouteValues())
 
-        @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+        @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
         {
             <text>
                 | @Html.ActionLink("Edit", "Edit", new { id = Model.Id })

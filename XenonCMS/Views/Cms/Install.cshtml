@@ -16,7 +16,7 @@
     //TODO Add elements to allow specifying settings (ie checkbox to enable/disable blog, contact (which will auto-create the pages))
     //TODO Also inputs like contact email address, site title, etc
 
-    if (Globals.IsUserFromGlobalAdminIP(ViewContext.RequestContext.HttpContext))
+    if (User.IsInRole("GlobalAdmin"))
     {
         <p>I'm lazy, so I haven't gotten around to creating the install page yet.  For now, just click the button below and then go supply the values in the database manually.</p>
 

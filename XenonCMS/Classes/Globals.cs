@@ -1,4 +1,5 @@
-﻿using System;
+﻿// TODO Any User.IsInRole checks also need to check if they're a SiteAdmin for the CURRENT domain!
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;

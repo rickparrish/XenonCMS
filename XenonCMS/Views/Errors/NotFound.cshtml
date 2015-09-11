@@ -7,8 +7,8 @@
 
 <p>Sorry, but the page you're looking for could not be found!</p>
 <p>
-    <a href="~/Home" class="btn btn-primary btn-lg">Back to the Home page</a>
-    @if (Globals.IsUserFromAdminIP(ViewContext.RequestContext.HttpContext))
+    <a href="~" class="btn btn-primary btn-lg">Back to the Home page</a>
+    @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
     {
         //TODO Don't display this create link for built-in controller actions (ie blog, admin)
         <a href="~/Admin/Pages/Create?Url=@ViewContext.RequestContext.HttpContext.Request.RawUrl.Trim('/')" class="btn btn-danger btn-lg">Create this page</a>
