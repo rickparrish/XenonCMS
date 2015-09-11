@@ -7,6 +7,7 @@ namespace XenonCMS.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
     using XenonCMS.Classes;
+    using Models;
 
     internal sealed class Configuration : DbMigrationsConfiguration<XenonCMS.Classes.ApplicationDbContext>
     {
@@ -19,16 +20,33 @@ namespace XenonCMS.Migrations
         {
             //  This method will be called after migrating to the latest version.
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            if (!context.Roles.Any(r => r.Name == "GlobalAdmin"))
+            {
+                var store = new RoleStore<IdentityRole>(context);
+                var manager = new RoleManager<IdentityRole>(store);
+                manager.Create(new IdentityRole { Name = "GlobalAdmin" });
+            }
+
+            if (!context.Roles.Any(r => r.Name == "SiteAdmin"))
+            {
+                var store = new RoleStore<IdentityRole>(context);
+                var manager = new RoleManager<IdentityRole>(store);
+                manager.Create(new IdentityRole { Name = "SiteAdmin" });
+            }
+
+            if (context.Users.Count() == 0)
+            {
+                var store = new UserStore<ApplicationUser>(context);
+                var manager = new UserManager<ApplicationUser>(store);
+                var user = new ApplicationUser
+                {
+                    Email = "TODO@TODO.TODO",
+                    UserName = "TODO@TODO.TODO"
+                };
+
+                manager.Create(user, "TODOPassword");
+                manager.AddToRole(user.Id, "GlobalAdmin");
+            }            
         }
     }
 }
