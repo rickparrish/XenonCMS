@@ -34,7 +34,6 @@ namespace XenonCMS.Classes
         public virtual DbSet<GlobalSidebar> GlobalSidebars { get; set; }
         public virtual DbSet<Site> Sites { get; set; }
         public virtual DbSet<SiteBlogPost> SiteBlogPosts { get; set; }
-        public virtual DbSet<SiteGlobalSidebar> SiteGlobalSidebars { get; set; }
         public virtual DbSet<SitePage> SitePages { get; set; }
     }
 }

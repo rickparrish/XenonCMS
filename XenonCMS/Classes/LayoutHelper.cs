@@ -130,10 +130,9 @@ namespace XenonCMS.Classes
                     if (Site != null) Result += Site.Sidebar;
 
                     // Get global side bar(s)
-                    var GlobalSidebars = DB.SiteGlobalSidebars.Where(x => x.Site.Domain == RequestDomain).OrderBy(x => x.GlobalSidebar.DisplayOrder);
-                    foreach (var Sidebar in GlobalSidebars)
+                    foreach (var Sidebar in Site.GlobalSidebars)
                     {
-                        Result += Sidebar.GlobalSidebar.Html;
+                        Result += Sidebar.Html;
                     }
                 }
 

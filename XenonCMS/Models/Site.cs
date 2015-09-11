@@ -20,6 +20,6 @@ namespace XenonCMS.Models
         public virtual List<ApplicationUser> Admins { get; set; }
         public virtual List<SiteBlogPost> BlogPosts { get; set; }
         public virtual List<SitePage> Pages { get; set; }
-        public virtual List<SiteGlobalSidebar> SiteGlobalSidebars { get; set; }
+        public virtual List<GlobalSidebar> GlobalSidebars { get; set; }
     }
 }

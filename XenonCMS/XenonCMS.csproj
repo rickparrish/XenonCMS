@@ -205,9 +205,9 @@
     <Compile Include="Classes\LayoutHelper.cs" />
     <Compile Include="Classes\ModelConverter.cs" />
     <Compile Include="Classes\SiteHelper.cs" />
-    <Compile Include="Migrations\201509110112231_Initial.cs" />
-    <Compile Include="Migrations\201509110112231_Initial.Designer.cs">
-      <DependentUpon>201509110112231_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201509110117035_Initial.cs" />
+    <Compile Include="Migrations\201509110117035_Initial.Designer.cs">
+      <DependentUpon>201509110117035_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -223,7 +223,6 @@
     <Compile Include="Models\SiteBlogPost.cs" />
     <Compile Include="Models\GlobalSidebar.cs" />
     <Compile Include="Models\Site.cs" />
-    <Compile Include="Models\SiteGlobalSidebar.cs" />
     <Compile Include="Models\SitePage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -282,8 +281,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201509110112231_Initial.resx">
-      <DependentUpon>201509110112231_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201509110117035_Initial.resx">
+      <DependentUpon>201509110117035_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

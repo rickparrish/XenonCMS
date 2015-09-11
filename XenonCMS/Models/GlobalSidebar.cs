@@ -12,6 +12,6 @@ namespace XenonCMS.Models
         public DateTime DateAdded { get; set; }
         public DateTime DateLastUpdated { get; set; }
 
-        public virtual ICollection<SiteGlobalSidebar> SiteGlobalSidebars { get; set; }
+        public virtual ICollection<Site> Sites { get; set; }
     }
 }
