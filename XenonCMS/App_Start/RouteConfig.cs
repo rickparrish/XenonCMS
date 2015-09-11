@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
-using XenonCMS.Helpers;
+using XenonCMS.Classes;
 
 namespace XenonCMS
 {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using XenonCMS.Helpers;
+using XenonCMS.Classes;
 using XenonCMS.Models;
 using XenonCMS.ViewModels.Cms;
 
@@ -103,7 +103,7 @@ namespace XenonCMS.Controllers
         //
         // POST: /Cms/Install/
         [HttpPost]
-        [GlobalAdminIPAuthorize]
+        [Authorize(Roles = "GlobalAdmin")]
         [ValidateAntiForgeryToken]
         public ActionResult Install(Install model)
         {

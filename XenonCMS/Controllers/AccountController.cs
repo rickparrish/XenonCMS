@@ -8,8 +8,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using XenonCMS.Models;
-using XenonCMS.ViewModels;
+using XenonCMS.ViewModels.Account;
 
 namespace XenonCMS.Controllers
 {

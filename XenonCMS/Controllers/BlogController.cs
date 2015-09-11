@@ -3,7 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using XenonCMS.Helpers;
+using XenonCMS.Classes;
 using XenonCMS.Models;
 using XenonCMS.ViewModels.Blog;
 
@@ -41,7 +41,7 @@ namespace XenonCMS.Controllers
         }
 
         // GET: /Blog/Create
-        [SiteAdminIPAuthorize]
+        [Authorize(Roles ="GlobalAdmin, SiteAdmin")]
         public ActionResult Create()
         {
             return View();
@@ -50,7 +50,7 @@ namespace XenonCMS.Controllers
         // POST: /Blog/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [SiteAdminIPAuthorize]
+        [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
         public ActionResult Create(Create viewModel)
         {
             if (ModelState.IsValid)
@@ -87,7 +87,7 @@ namespace XenonCMS.Controllers
         }
 
         // GET: /Blog/Edit/5
-        [SiteAdminIPAuthorize]
+        [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -112,8 +112,8 @@ namespace XenonCMS.Controllers
 
         // POST: /Blog/Edit/5
         [HttpPost]
-        [SiteAdminIPAuthorize]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
         public ActionResult Edit(Edit viewModel)
         {
             if (ModelState.IsValid)
@@ -157,7 +157,7 @@ namespace XenonCMS.Controllers
         }
 
         // GET: /Blog/Delete/5
-        [SiteAdminIPAuthorize]
+        [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -183,7 +183,7 @@ namespace XenonCMS.Controllers
         // POST: /Blog/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [SiteAdminIPAuthorize]
+        [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
         public ActionResult DeleteConfirmed(int id)
         {
             string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Caching;
 using XenonCMS.Models;
 
-namespace XenonCMS.Helpers
+namespace XenonCMS.Classes
 {
     public class DatabaseCache
     {

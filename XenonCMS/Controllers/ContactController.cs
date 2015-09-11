@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Net.Mail;
 using System.Web.Mvc;
-using XenonCMS.Helpers;
+using XenonCMS.Classes;
 using XenonCMS.ViewModels.Contact;
 
 namespace XenonCMS.Controllers

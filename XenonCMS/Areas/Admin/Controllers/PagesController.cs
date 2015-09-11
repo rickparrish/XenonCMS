@@ -5,12 +5,12 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using XenonCMS.Areas.Admin.ViewModels.Pages;
-using XenonCMS.Helpers;
+using XenonCMS.Classes;
 using XenonCMS.Models;
 
 namespace XenonCMS.Areas.Admin.Controllers
 {
-    [SiteAdminIPAuthorize]
+    [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
     public class PagesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

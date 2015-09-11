@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Hosting;
 using XenonCMS.Models;
 
-namespace XenonCMS.Helpers
+namespace XenonCMS.Classes
 {
     public class SiteHelper
     {

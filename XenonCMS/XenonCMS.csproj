@@ -199,14 +199,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\DatabaseCache.cs" />
-    <Compile Include="Helpers\CmsUrlConstraint.cs" />
-    <Compile Include="Helpers\Globals.cs" />
-    <Compile Include="Helpers\GlobalAdminIPAuthorizeAttribute.cs" />
-    <Compile Include="Helpers\SiteAdminIPAuthorizeAttribute.cs" />
-    <Compile Include="Helpers\LayoutHelper.cs" />
-    <Compile Include="Helpers\ModelConverter.cs" />
-    <Compile Include="Helpers\SiteHelper.cs" />
+    <Compile Include="Classes\DatabaseCache.cs" />
+    <Compile Include="Classes\Globals.cs" />
+    <Compile Include="Classes\LayoutHelper.cs" />
+    <Compile Include="Classes\ModelConverter.cs" />
+    <Compile Include="Classes\SiteHelper.cs" />
     <Compile Include="Migrations\201509102347360_Initial.cs" />
     <Compile Include="Migrations\201509102347360_Initial.Designer.cs">
       <DependentUpon>201509102347360_Initial.cs</DependentUpon>
@@ -214,7 +211,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\AccountViewModels.cs" />
+    <Compile Include="ViewModels\Account\Login.cs" />
     <Compile Include="ViewModels\Blog\Create.cs" />
     <Compile Include="ViewModels\Blog\Index.cs" />
     <Compile Include="ViewModels\Blog\Edit.cs" />

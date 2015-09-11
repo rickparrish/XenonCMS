@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace XenonCMS.Helpers
+namespace XenonCMS.Classes
 {
     static public class ModelConverter
     {

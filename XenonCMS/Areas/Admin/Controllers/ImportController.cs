@@ -7,7 +7,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
-using XenonCMS.Helpers;
+using XenonCMS.Classes;
 using XenonCMS.Models;
 
 namespace XenonCMS.Areas.Admin.Controllers

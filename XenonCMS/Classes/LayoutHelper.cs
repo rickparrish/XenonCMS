@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using XenonCMS.Models;
 
-namespace XenonCMS.Helpers
+namespace XenonCMS.Classes
 {
     static public class LayoutHelper
     {
