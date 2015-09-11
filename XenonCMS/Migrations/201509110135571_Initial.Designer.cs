@@ -13,7 +13,7 @@ namespace XenonCMS.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201509110117035_Initial"; }
+            get { return "201509110135571_Initial"; }
         }
         
         string IMigrationMetadata.Source

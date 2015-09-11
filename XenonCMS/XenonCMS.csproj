@@ -14,6 +14,7 @@
     <RootNamespace>XenonCMS</RootNamespace>
     <AssemblyName>XenonCMS</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -205,9 +206,9 @@
     <Compile Include="Classes\LayoutHelper.cs" />
     <Compile Include="Classes\ModelConverter.cs" />
     <Compile Include="Classes\SiteHelper.cs" />
-    <Compile Include="Migrations\201509110117035_Initial.cs" />
-    <Compile Include="Migrations\201509110117035_Initial.Designer.cs">
-      <DependentUpon>201509110117035_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201509110135571_Initial.cs" />
+    <Compile Include="Migrations\201509110135571_Initial.Designer.cs">
+      <DependentUpon>201509110135571_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -281,8 +282,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201509110117035_Initial.resx">
-      <DependentUpon>201509110117035_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201509110135571_Initial.resx">
+      <DependentUpon>201509110135571_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

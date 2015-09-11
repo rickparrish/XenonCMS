@@ -80,6 +80,28 @@ namespace XenonCMS
                         Context.Response.StatusCode = 500;
                     }
                 }
+                else if (Globals.IsNewSite(new HttpContextWrapper(Context)))
+                {
+                    Response.Clear();
+
+                    var InstallRD = new RouteData();
+                    InstallRD.DataTokens["area"] = "";
+                    InstallRD.Values["controller"] = "Cms";
+                    InstallRD.Values["action"] = "Install";
+
+                    try
+                    {
+                        Context.Response.StatusCode = 200;
+                        ((IController)new CmsController()).Execute(new RequestContext(new HttpContextWrapper(Context), InstallRD));
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO Log the exception
+                        Context.Response.StatusCode = 500;
+                    }
+                }
+
 
                 // If we get here the file handler failed, so show a friendly 404
                 var rd = new RouteData();
