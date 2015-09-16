@@ -40,11 +40,11 @@ namespace XenonCMS.Migrations
                 var manager = new UserManager<ApplicationUser>(store);
                 var user = new ApplicationUser
                 {
-                    Email = "TODO@TODO.TODO",
-                    UserName = "TODO@TODO.TODO"
+                    Email = $"XenonCMS@{Environment.MachineName}",
+                    UserName = $"XenonCMS@{Environment.MachineName}"
                 };
 
-                manager.Create(user, "TODOPassword");
+                manager.Create(user, Environment.MachineName);
                 manager.AddToRole(user.Id, "GlobalAdmin");
             }            
         }
