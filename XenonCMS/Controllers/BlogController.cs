@@ -11,37 +11,36 @@ namespace XenonCMS.Controllers
 {
     public class BlogController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-
         // GET: /Blog/
         public ActionResult Index()
         {
-            return View(DatabaseCache.GetBlogIndex(db, ControllerContext.RequestContext.HttpContext));
+            return View(Caching.GetBlogPosts(ControllerContext.RequestContext.HttpContext));
         }
 
         // GET: /Blog/Details/5
         public ActionResult Details(int id, int? year, int? month, int? day, string slug)
         {
-            Details ViewModel = DatabaseCache.GetBlogDetails(id, db, ControllerContext.RequestContext.HttpContext);
-            if (ViewModel == null)
+            SiteBlogPost BlogPost = Caching.GetBlogPost(id, ControllerContext.RequestContext.HttpContext);
+            if (BlogPost == null)
             {
+                // TODOX Should we be throwing a 404 exception here?
                 return HttpNotFound();
             }
             else
             {
-                if ((year == ViewModel.DatePosted.Year) && (month == ViewModel.DatePosted.Month) && (day == ViewModel.DatePosted.Day) && (slug == ViewModel.Slug))
+                if ((year == BlogPost.DatePosted.Year) && (month == BlogPost.DatePosted.Month) && (day == BlogPost.DatePosted.Day) && (slug == BlogPost.Slug))
                 {
-                    return View(ViewModel);
+                    return View(BlogPost);
                 }
                 else
                 {
-                    return RedirectToRoutePermanent("BlogPost", ViewModel.ToRouteValues());
+                    return RedirectToRoutePermanent("BlogPost", BlogPost.ToRouteValues());
                 }
             }
         }
 
         // GET: /Blog/Create
-        [Authorize(Roles ="GlobalAdmin, SiteAdmin")]
+        [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
         public ActionResult Create()
         {
             return View();
@@ -55,30 +54,33 @@ namespace XenonCMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                using (var DB = new ApplicationDbContext())
+                {
+                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
 
-                // View model to domain model
-                SiteBlogPost NewPost = ModelConverter.Convert<SiteBlogPost>(viewModel);
+                    // View model to domain model
+                    SiteBlogPost NewPost = ModelConverter.Convert<SiteBlogPost>(viewModel);
 
-                // Assign values for fields not on form
-                NewPost.DateLastUpdated = DateTime.Now;
-                NewPost.DatePosted = DateTime.Now;
-                NewPost.SiteId = db.Sites.Single(x => x.Domain == RequestDomain).Id;
-                
-                // Transform values
-                if (string.IsNullOrWhiteSpace(viewModel.Slug)) NewPost.Slug = NewPost.Title;
-                NewPost.Slug = Globals.GetSlug(NewPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
-                NewPost.FullPostText = Globals.SaveImagesToDisk(NewPost.FullPostText, ControllerContext.HttpContext);
-                NewPost.PreviewText = Globals.SaveImagesToDisk(NewPost.PreviewText, ControllerContext.HttpContext);
+                    // Assign values for fields not on form
+                    NewPost.DateLastUpdated = DateTime.Now;
+                    NewPost.DatePosted = DateTime.Now;
+                    NewPost.SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
 
-                // Save changes
-                db.SiteBlogPosts.Add(NewPost);
-                db.SaveChanges();
+                    // Transform values
+                    if (string.IsNullOrWhiteSpace(viewModel.Slug)) NewPost.Slug = NewPost.Title;
+                    NewPost.Slug = Globals.GetSlug(NewPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
+                    NewPost.FullPostText = Globals.SaveImagesToDisk(NewPost.FullPostText, ControllerContext.HttpContext);
+                    NewPost.PreviewText = Globals.SaveImagesToDisk(NewPost.PreviewText, ControllerContext.HttpContext);
 
-                // Update cache
-                DatabaseCache.ResetBlogIndex(ControllerContext.RequestContext.HttpContext);
+                    // Save changes
+                    DB.SiteBlogPosts.Add(NewPost);
+                    DB.SaveChanges();
 
-                return RedirectToAction("Index");
+                    // Update cache
+                    Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
+
+                    return RedirectToAction("Index");
+                }
             }
             else
             {
@@ -96,16 +98,19 @@ namespace XenonCMS.Controllers
             }
             else
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
-                
-                SiteBlogPost Post = db.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
-                if (Post == null)
+                using (var DB = new ApplicationDbContext())
                 {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    return View(ModelConverter.Convert<Edit>(Post));
+                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+
+                    SiteBlogPost Post = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
+                    if (Post == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    else
+                    {
+                        return View(ModelConverter.Convert<Edit>(Post));
+                    }
                 }
             }
         }
@@ -118,36 +123,38 @@ namespace XenonCMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
-
-                SiteBlogPost EditedPost = db.SiteBlogPosts.SingleOrDefault(x => (x.Id == viewModel.Id) && (x.Site.Domain == RequestDomain));
-                if (EditedPost == null)
+                using (var DB = new ApplicationDbContext())
                 {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    // View model to domain model
-                    ModelConverter.Convert(viewModel, EditedPost);
+                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
 
-                    // Assign values for fields not on form
-                    EditedPost.DateLastUpdated = DateTime.Now;
-                    
-                    // Transform values
-                    if (string.IsNullOrWhiteSpace(EditedPost.Slug)) EditedPost.Slug = EditedPost.Title;
-                    EditedPost.Slug = Globals.GetSlug(EditedPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
-                    EditedPost.FullPostText = Globals.SaveImagesToDisk(EditedPost.FullPostText, ControllerContext.HttpContext);
-                    EditedPost.PreviewText = Globals.SaveImagesToDisk(EditedPost.PreviewText, ControllerContext.HttpContext);
+                    SiteBlogPost EditedPost = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == viewModel.Id) && (x.Site.Domain == RequestDomain));
+                    if (EditedPost == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    else
+                    {
+                        // View model to domain model
+                        ModelConverter.Convert(viewModel, EditedPost);
 
-                    // Save changes
-                    db.Entry(EditedPost).State = EntityState.Modified;
-                    db.SaveChanges();
+                        // Assign values for fields not on form
+                        EditedPost.DateLastUpdated = DateTime.Now;
 
-                    // Update cache
-                    DatabaseCache.RemoveBlogDetails(viewModel.Id, ControllerContext.RequestContext.HttpContext);
-                    DatabaseCache.ResetBlogIndex(ControllerContext.RequestContext.HttpContext);
+                        // Transform values
+                        if (string.IsNullOrWhiteSpace(EditedPost.Slug)) EditedPost.Slug = EditedPost.Title;
+                        EditedPost.Slug = Globals.GetSlug(EditedPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
+                        EditedPost.FullPostText = Globals.SaveImagesToDisk(EditedPost.FullPostText, ControllerContext.HttpContext);
+                        EditedPost.PreviewText = Globals.SaveImagesToDisk(EditedPost.PreviewText, ControllerContext.HttpContext);
 
-                    return RedirectToAction("Index");
+                        // Save changes
+                        DB.Entry(EditedPost).State = EntityState.Modified;
+                        DB.SaveChanges();
+
+                        // Update cache
+                        Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
+
+                        return RedirectToAction("Index");
+                    }
                 }
             }
             else
@@ -166,16 +173,19 @@ namespace XenonCMS.Controllers
             }
             else
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                using (var DB = new ApplicationDbContext())
+                {
+                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
 
-                SiteBlogPost Post = db.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
-                if (Post == null)
-                {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    return View(ModelConverter.Convert<Delete>(Post));
+                    SiteBlogPost Post = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
+                    if (Post == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    else
+                    {
+                        return View(ModelConverter.Convert<Delete>(Post));
+                    }
                 }
             }
         }
@@ -186,34 +196,27 @@ namespace XenonCMS.Controllers
         [Authorize(Roles = "GlobalAdmin, SiteAdmin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
-
-            SiteBlogPost Post = db.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
-            if (Post == null)
+            using (var DB = new ApplicationDbContext())
             {
-                return HttpNotFound();
-            }
-            else
-            {
-                // Update cache
-                DatabaseCache.RemoveBlogDetails(id, ControllerContext.RequestContext.HttpContext);
-                DatabaseCache.ResetBlogIndex(ControllerContext.RequestContext.HttpContext);
+                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
 
-                // Save changes
-                db.SiteBlogPosts.Remove(Post);
-                db.SaveChanges();
+                SiteBlogPost Post = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
+                if (Post == null)
+                {
+                    return HttpNotFound();
+                }
+                else
+                {
+                    // Update cache
+                    Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
 
-                return RedirectToAction("Index");
-            }
-        }
+                    // Save changes
+                    DB.SiteBlogPosts.Remove(Post);
+                    DB.SaveChanges();
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
+                    return RedirectToAction("Index");
+                }
             }
-            base.Dispose(disposing);
         }
     }
 }

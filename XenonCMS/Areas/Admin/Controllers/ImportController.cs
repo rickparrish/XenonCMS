@@ -97,7 +97,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                 Site.Theme = KVP.Value.DocumentElement.SelectSingleNode("SelectedTheme").InnerText;
                 // TODO GetSimple has TrackingId
                 DB.SaveChanges();
-                DatabaseCache.ResetSite(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetSite(ControllerContext.RequestContext.HttpContext);
             }
         }
 
@@ -122,7 +122,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                 SBP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
                 if (SBP.Id <= 0) DB.SiteBlogPosts.Add(SBP);
                 DB.SaveChanges();
-                DatabaseCache.ResetBlogIndex(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
             }
         }
 
@@ -152,7 +152,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                         // TODO Can this be used on the blog/contact header? SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
                         DB.SaveChanges();
 
-                        DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
                     }
                 }
                 else
@@ -178,8 +178,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                     if (SP.Id <= 0) DB.SitePages.Add(SP);
                     DB.SaveChanges();
 
-                    DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
-                    DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, Slug);
+                    Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
 
                     if (string.IsNullOrWhiteSpace(Parent)) TopLevelPages.Add(SP.Id, SP.Slug);
                 }
@@ -197,7 +196,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                 var Site = DB.Sites.Single(x => x.Domain == RequestDomain);
                 Site.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("SITENAME").InnerText);
                 DB.SaveChanges();
-                DatabaseCache.ResetSite(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetSite(ControllerContext.RequestContext.HttpContext);
             }
         }
         #endregion

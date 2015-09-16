@@ -36,28 +36,18 @@ namespace XenonCMS.Controllers
                 }
             }
 
-            // Check if we cached the page
-            SitePage Page = DatabaseCache.GetSitePage(ControllerContext.RequestContext.HttpContext, slug);
+            // Get the page
+            SitePage Page = Caching.GetPage(slug, ControllerContext.RequestContext.HttpContext);
             if (Page == null)
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
-                using (ApplicationDbContext DB = new ApplicationDbContext())
+                // TODO Page should never be null, so we could remove all this, or maybe just the Cms/Install part
+                if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
                 {
-                    Page = DB.SitePages.SingleOrDefault(x => (x.Slug == slug) && (x.Site.Domain == RequestDomain));
-                }
-                DatabaseCache.AddSitePage(ControllerContext.RequestContext.HttpContext, Page);
-            }
-
-            // Ensure retrieved page is valid
-            if (Page == null)
-            {
-                if (Globals.IsNewSite(ControllerContext.RequestContext.HttpContext))
-                {
-                    return RedirectToAction("Install", "Cms");
+                    return HttpNotFound();
                 }
                 else
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Install", "Cms");
                 }
             }
             else
@@ -88,15 +78,16 @@ namespace XenonCMS.Controllers
 
         //
         // GET: /Cms/Install/
+        [Authorize(Roles = "GlobalAdmin")]
         public ActionResult Install()
         {
-            if (Globals.IsNewSite(ControllerContext.RequestContext.HttpContext))
+            if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
             {
-                return View();
+                return RedirectToAction("Index");
             }
             else
             {
-                return RedirectToAction("Index");
+                return View();
             }
         }
 
@@ -107,7 +98,11 @@ namespace XenonCMS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Install(Install model)
         {
-            if (Globals.IsNewSite(ControllerContext.RequestContext.HttpContext))
+            if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
+            {
+                return RedirectToAction("Index");
+            }
+            else
             {
                 if (ModelState.IsValid)
                 {
@@ -185,11 +180,10 @@ namespace XenonCMS.Controllers
                         DB.Sites.Add(Site);
                         DB.SaveChanges();
 
-                        DatabaseCache.AddSite(ControllerContext.RequestContext.HttpContext, Site);
-                        DatabaseCache.ResetAdminIPs(ControllerContext.RequestContext.HttpContext);
-                        DatabaseCache.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
-                        DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
-                        DatabaseCache.ResetSidebars(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetSite(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
+                        // TODOXXX Caching.ResetSidebars(ControllerContext.RequestContext.HttpContext);
                     }
 
                     return RedirectToAction("Index");
@@ -198,10 +192,6 @@ namespace XenonCMS.Controllers
                 {
                     return View(model);
                 }
-            }
-            else
-            {
-                return RedirectToAction("Index");
             }
         }
     }

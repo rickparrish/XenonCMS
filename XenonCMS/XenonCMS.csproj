@@ -193,6 +193,7 @@
     <Compile Include="Areas\Admin\ViewModels\Pages\Create.cs" />
     <Compile Include="Areas\Admin\ViewModels\Pages\Index.cs" />
     <Compile Include="Classes\ApplicationDbContext.cs" />
+    <Compile Include="Classes\Caching.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CmsController.cs" />

@@ -14,7 +14,7 @@ namespace XenonCMS.Classes
 
         private static List<NavMenuItem> GetNavMenuItems(HttpContextBase httpContext, bool isAdmin, bool rightAlign)
         {
-            List<NavMenuItem> Result = DatabaseCache.GetNavMenuItems(httpContext, isAdmin, rightAlign);
+            List<NavMenuItem> Result = null; // TODOXXX DatabaseCache.GetNavMenuItems(httpContext, isAdmin, rightAlign);
             if (Result == null)
             {
                 Result = new List<NavMenuItem>();
@@ -44,7 +44,7 @@ namespace XenonCMS.Classes
                     }
                 }
 
-                DatabaseCache.AddNavMenuItems(httpContext, Result, isAdmin, rightAlign);
+                //TODOXXX DatabaseCache.AddNavMenuItems(httpContext, Result, isAdmin, rightAlign);
             }
 
             return Result;
@@ -52,28 +52,15 @@ namespace XenonCMS.Classes
 
         public static string NavBarStyle(HttpContextBase httpContext)
         {
-            Site Site = DatabaseCache.GetSite(httpContext);
+            Site Site = Caching.GetSite(httpContext);
             if (Site == null)
             {
-                string RequestDomain = Globals.GetRequestDomain(httpContext);
-
-                using (ApplicationDbContext DB = new ApplicationDbContext())
-                {
-                    // Get site title
-                    Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
-                }
-
-                if (Site == null)
-                {
-                    return "default";
-                }
-                else
-                {
-                    DatabaseCache.AddSite(httpContext, Site);
-                }
+                return "default";
             }
-
-            return (Site.NavBarInverted ? "inverse" : "default");
+            else
+            {
+                return (Site.NavBarInverted ? "inverse" : "default");
+            }
         }
 
         public static string NavMenu(bool rightAlign, HttpContextBase httpContext, UrlHelper urlHelper)
@@ -118,7 +105,7 @@ namespace XenonCMS.Classes
 
         public static string Sidebar(HttpContextBase httpContext)
         {
-            string Result = DatabaseCache.GetSidebars(httpContext);
+            string Result = null; // TODOXXX DatabaseCache.GetSidebars(httpContext);
             if (Result == null)
             {
                 string RequestDomain = Globals.GetRequestDomain(httpContext);
@@ -137,7 +124,7 @@ namespace XenonCMS.Classes
                 }
 
                 if (Result == null) Result = "";
-                DatabaseCache.AddSidebars(httpContext, Result);
+                // TODOXXX DatabaseCache.AddSidebars(httpContext, Result);
             }
 
             return Result;
@@ -145,54 +132,14 @@ namespace XenonCMS.Classes
 
         public static string SiteTitle(HttpContextBase httpContext)
         {
-            Site Site = DatabaseCache.GetSite(httpContext);
-            if (Site == null)
-            {
-                string RequestDomain = Globals.GetRequestDomain(httpContext);
-
-                using (ApplicationDbContext DB = new ApplicationDbContext())
-                {
-                    // Get site title
-                    Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
-                }
-
-                if (Site == null)
-                {
-                    return Globals.GetRequestDomain(httpContext);
-                }
-                else
-                {
-                    DatabaseCache.AddSite(httpContext, Site);
-                }
-            }
-            
-            return Site.Title;
+            Site Site = Caching.GetSite(httpContext);
+            return (Site == null) ? Globals.GetRequestDomain(httpContext) : Site.Title;
         }
 
         public static string Theme(HttpContextBase httpContext)
         {
-            Site Site = DatabaseCache.GetSite(httpContext);
-            if (Site == null)
-            {
-                string RequestDomain = Globals.GetRequestDomain(httpContext);
-
-                using (ApplicationDbContext DB = new ApplicationDbContext())
-                {
-                    // Get site title
-                    Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
-                }
-
-                if (Site == null)
-                {
-                    return "Cerulean";
-                }
-                else
-                {
-                    DatabaseCache.AddSite(httpContext, Site);
-                }
-            }
-
-            return Site.Theme;
+            Site Site = Caching.GetSite(httpContext);
+            return (Site == null) ? "Cerulean" : Site.Theme;
         }
 
         public class NavMenuItem

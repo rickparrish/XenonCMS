@@ -30,6 +30,7 @@ namespace XenonCMS.Classes
         }
 
         // From: http://predicatet.blogspot.com/2009/04/improved-c-slug-generator-or-how-to.html
+        // TODO Add ignored word filter
         static public string GetSlug(string text, bool allowSlash)
         {
             // remove accent characters, lowercase, and trim
@@ -54,21 +55,21 @@ namespace XenonCMS.Classes
             return text;
         }
 
-        static public bool IsNewSite(HttpContextBase httpContext)
-        {
-            Site Site = DatabaseCache.GetSite(httpContext);
-            if (Site == null)
-            {
-                string RequestDomain = GetRequestDomain(httpContext);
-                using (ApplicationDbContext DB = new ApplicationDbContext())
-                {
-                    Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
-                }
-                DatabaseCache.AddSite(httpContext, Site);
-            }
+        //static public bool IsNewSite(HttpContextBase httpContext)
+        //{
+        //    Site Site = DatabaseCache.GetSite(httpContext);
+        //    if (Site == null)
+        //    {
+        //        string RequestDomain = GetRequestDomain(httpContext);
+        //        using (ApplicationDbContext DB = new ApplicationDbContext())
+        //        {
+        //            Site = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
+        //        }
+        //        DatabaseCache.AddSite(httpContext, Site);
+        //    }
 
-            return (Site == null);
-        }
+        //    return (Site == null);
+        //}
 
         // From: https://github.com/madskristensen/MiniBlog
         static public string SaveImagesToDisk(string html, HttpContextBase httpContext)

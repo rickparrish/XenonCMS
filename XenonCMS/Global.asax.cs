@@ -80,7 +80,7 @@ namespace XenonCMS
                         Context.Response.StatusCode = 500;
                     }
                 }
-                else if (Globals.IsNewSite(new HttpContextWrapper(Context)))
+                else if (!SiteHelper.SiteExists(new HttpContextWrapper(Context)))
                 {
                     Response.Clear();
 
@@ -101,7 +101,6 @@ namespace XenonCMS
                         Context.Response.StatusCode = 500;
                     }
                 }
-
 
                 // If we get here the file handler failed, so show a friendly 404
                 var rd = new RouteData();

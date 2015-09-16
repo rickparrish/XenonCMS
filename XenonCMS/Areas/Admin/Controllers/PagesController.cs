@@ -67,7 +67,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                     db.SaveChanges();
 
                     // Update cache
-                    DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
+                    Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
 
                     return RedirectToAction("Index");
                 }
@@ -148,9 +148,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                         db.SaveChanges();
 
                         // Update cache
-                        DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, OldSlug);
-                        DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, NewSlug);
-                        DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
 
                         return RedirectToAction("Index");
                     }
@@ -200,8 +198,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             else
             {
                 // Update cache
-                DatabaseCache.RemoveSitePage(ControllerContext.RequestContext.HttpContext, Page.Slug);
-                DatabaseCache.ResetNavMenuItems(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
 
                 // Save changes
                 db.SitePages.Remove(Page);

@@ -37,6 +37,12 @@ namespace XenonCMS.Classes
             return (RequestedFile.ToLower().StartsWith(SiteFilesDirectory.ToLower()) && File.Exists(RequestedFile));
         }
 
+        public static bool SiteExists(HttpContextBase httpContext)
+        {
+            // TODO
+            return false;
+        }
+
         public static bool SlugExists(HttpContextBase httpContext, string slug)
         {
             // Clean up the url parameter (TODO Duplicated in Cms/Slug)
