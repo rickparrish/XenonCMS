@@ -18,14 +18,7 @@ namespace XenonCMS.Classes
         static public string GetRequestDomain(HttpContextBase httpContext)
         {
             string Result = httpContext.Request.Url.Host.ToLower();
-            if (Result == "localhost")
-            {
-                Result = ConfigurationManager.AppSettings["XenonCMS:DebugDomain"];
-            }
-            else if (Result.StartsWith("www."))
-            {
-                Result = Result.Substring(4);
-            }
+            if (Result.StartsWith("www.")) Result = Result.Substring(4);
             return Result;
         }
 

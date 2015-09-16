@@ -23,89 +23,30 @@ namespace XenonCMS
             }
             else if (Context.Response.StatusCode == 404)
             {
-                try
-                {
-                    Response.Clear();
-                    if (SiteHelper.SlugExists(Context.Request.RequestContext.HttpContext, Request.FilePath))
-                    {
-                        var SlugRD = new RouteData();
-                        SlugRD.DataTokens["area"] = "";
-                        SlugRD.Values["controller"] = "Cms";
-                        SlugRD.Values["action"] = "Slug";
-                        SlugRD.Values["slug"] = Request.FilePath;
-
-                        try
-                        {
-                            Context.Response.StatusCode = 200;
-                            ((IController)new CmsController()).Execute(new RequestContext(new HttpContextWrapper(Context), SlugRD));
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            SendError500Response(ex, "Application_EndRequest, 404, SlugExists");
-                            return;
-                        }
-                    }
-                    else if (SiteHelper.FileExists(Context.Request.RequestContext.HttpContext, Request.FilePath))
-                    {
-                        var FileRD = new RouteData();
-                        FileRD.DataTokens["area"] = "";
-                        FileRD.Values["controller"] = "Cms";
-                        FileRD.Values["action"] = "File";
-                        FileRD.Values["filename"] = Request.FilePath;
-
-                        try
-                        {
-                            Context.Response.StatusCode = 200;
-                            ((IController)new CmsController()).Execute(new RequestContext(new HttpContextWrapper(Context), FileRD));
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            SendError500Response(ex, "Application_EndRequest, 404, FileExists");
-                            return;
-                        }
-                    }
-                    else if (!SiteHelper.SiteExists(new HttpContextWrapper(Context)))
-                    {
-                        Response.Clear();
-
-                        var InstallRD = new RouteData();
-                        InstallRD.DataTokens["area"] = "";
-                        InstallRD.Values["controller"] = "Cms";
-                        InstallRD.Values["action"] = "Install";
-
-                        try
-                        {
-                            Context.Response.StatusCode = 200;
-                            ((IController)new CmsController()).Execute(new RequestContext(new HttpContextWrapper(Context), InstallRD));
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            SendError500Response(ex, "Application_EndRequest, 404, !SiteExists");
-                            return;
-                        }
-                    }
-
-                    // If we get here the file handler failed, so show a friendly 404
-                    var rd = new RouteData();
-                    rd.DataTokens["area"] = "";
-                    rd.Values["controller"] = "Errors";
-                    rd.Values["action"] = (Response.StatusCode == 404) ? "NotFound" : "InternalServerError"; // Slug and File handlers may have thrown a 500 above
-
-                    ((IController)new ErrorsController()).Execute(new RequestContext(new HttpContextWrapper(Context), rd));
-                }
-                catch (Exception ex)
-                {
-                    SendError500Response(ex, "Application_EndRequest, 404");
-                    return;
-                }
+                SendErrorResponse("NotFound");
             }
             else if (Context.Response.StatusCode == 500)
             {
-                SendError500Response(null, "Application_EndRequest, 500");
-                return;
+                var ex = Server.GetLastError();
+
+                try
+                {
+                    // TODO Log/email the exception and message
+                }
+                catch (Exception ex2)
+                {
+                    // Ignore email failure
+                }
+
+                try
+                {
+                    SendErrorResponse("InternalServerError");
+                }
+                catch (Exception ex2)
+                {
+                    // TODO Log/email the exception and message
+                    Response.Redirect("~/500.html");
+                }
             }
         }
 
@@ -139,30 +80,6 @@ namespace XenonCMS
             rd.Values["action"] = action;
 
             ((IController)new ErrorsController()).Execute(new RequestContext(new HttpContextWrapper(Context), rd));
-        }
-
-        private void SendError500Response(Exception ex, string Message)
-        {
-            if (ex == null) ex = Server.GetLastError();
-
-            try
-            {
-                // TODO Log/email the exception and message
-            }
-            catch (Exception ex2)
-            {
-                // Ignore email failure
-            }
-
-            try
-            {
-                SendErrorResponse("InternalServerError");
-            }
-            catch (Exception ex2)
-            {
-                // TODO Log/email the exception and message
-                Response.Redirect("~/500.html");
-            }
         }
     }
 }

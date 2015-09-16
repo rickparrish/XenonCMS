@@ -11,15 +11,10 @@ namespace XenonCMS
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                name: "CmsFile",
-                url: "Cms/File/{*filename}",
-                defaults: new { controller = "Cms", action = "File" }
-            );
-
-            routes.MapRoute(
-                name: "CmsSlug",
-                url: "Cms/Slug/{*slug}",
-                defaults: new { controller = "Cms", action = "Slug" }
+                name: "Default",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
+                constraints: new { controller = "Account|Blog|Cms|Contact|Errors" } /*TODO Can this be done dynamically? Ie pull a list of valid controllers/actions?*/
             );
 
             routes.MapRoute(
@@ -37,9 +32,9 @@ namespace XenonCMS
             );
 
             routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                name: "CmsSlug",
+                url: "{*slug}",
+                defaults: new { controller = "Cms", action = "Slug" }
             );
         }
     }

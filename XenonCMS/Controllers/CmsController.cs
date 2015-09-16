@@ -18,65 +18,6 @@ namespace XenonCMS.Controllers
     public class CmsController : Controller
     {
         //
-        // GET: /Cms/
-        public ActionResult Slug(string slug)
-        {
-            // Clean up the url parameter
-            if (string.IsNullOrWhiteSpace(slug))
-            {
-                slug = "home";
-            }
-            else
-            {
-                slug = slug.ToLower().Trim('/');
-                if (slug.EndsWith("/index")) slug = slug.Substring(0, slug.LastIndexOf("/"));
-                if (string.IsNullOrWhiteSpace(slug))
-                {
-                    slug = "home";
-                }
-            }
-
-            // Get the page
-            SitePage Page = Caching.GetPage(slug, ControllerContext.RequestContext.HttpContext);
-            if (Page == null)
-            {
-                // TODO Page should never be null, so we could remove all this, or maybe just the Cms/Install part
-                if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
-                {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    return RedirectToAction("Install", "Cms");
-                }
-            }
-            else
-            {
-                ViewBag.Layout = Page.Layout;
-                ViewBag.Title = Page.Title;
-                ViewBag.ShowTitleOnPage = Page.ShowTitleOnPage;
-                ViewBag.Html = Page.Html;
-                ViewBag.DateLastUpdated = Page.DateLastUpdated;
-                return View();
-            }
-        }
-
-        //
-        // GET: /CmsFile/File/
-        public FilePathResult File(string filename)
-        {
-            string AbsoluteFilename = SiteHelper.AbsoluteFilename(ControllerContext.RequestContext.HttpContext, filename);
-            if (System.IO.File.Exists(AbsoluteFilename))
-            {
-                return File(AbsoluteFilename, MimeMapping.GetMimeMapping(AbsoluteFilename));
-            }
-            else
-            {
-                throw new HttpException(404, "Not found");
-            }
-        }
-
-        //
         // GET: /Cms/Install/
         public ActionResult Install()
         {
@@ -191,6 +132,50 @@ namespace XenonCMS.Controllers
                 {
                     return View(model);
                 }
+            }
+        }
+
+        //
+        // GET: /Cms/
+        public ActionResult Slug(string slug)
+        {
+            // Clean up the url parameter
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                slug = "home";
+            }
+            else
+            {
+                slug = slug.ToLower().Trim('/');
+                if (slug.EndsWith("/index")) slug = slug.Substring(0, slug.LastIndexOf("/"));
+                if (string.IsNullOrWhiteSpace(slug))
+                {
+                    slug = "home";
+                }
+            }
+
+            // Get the page
+            SitePage Page = Caching.GetPage(slug, ControllerContext.RequestContext.HttpContext);
+            if (Page == null)
+            {
+                // TODO Page should never be null, so we could remove all this, or maybe just the Cms/Install part
+                if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
+                {
+                    return HttpNotFound();
+                }
+                else
+                {
+                    return RedirectToAction("Install", "Cms");
+                }
+            }
+            else
+            {
+                ViewBag.Layout = Page.Layout;
+                ViewBag.Title = Page.Title;
+                ViewBag.ShowTitleOnPage = Page.ShowTitleOnPage;
+                ViewBag.Html = Page.Html;
+                ViewBag.DateLastUpdated = Page.DateLastUpdated;
+                return View();
             }
         }
     }
