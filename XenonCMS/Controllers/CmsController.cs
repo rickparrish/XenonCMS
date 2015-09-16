@@ -78,7 +78,6 @@ namespace XenonCMS.Controllers
 
         //
         // GET: /Cms/Install/
-        [Authorize(Roles = "GlobalAdmin")]
         public ActionResult Install()
         {
             if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))

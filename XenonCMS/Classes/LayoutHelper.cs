@@ -105,7 +105,7 @@ namespace XenonCMS.Classes
 
         public static string Sidebar(HttpContextBase httpContext)
         {
-            string Result = null; // TODOXXX DatabaseCache.GetSidebars(httpContext);
+            string Result = ""; // TODOXXX DatabaseCache.GetSidebars(httpContext);
             if (Result == null)
             {
                 string RequestDomain = Globals.GetRequestDomain(httpContext);

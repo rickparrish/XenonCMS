@@ -7,7 +7,7 @@
 
 <p>Sorry, but the page you're looking for could not be found!</p>
 <p>
-    <a href="~" class="btn btn-primary btn-lg">Back to the Home page</a>
+    <a href="@Url.Content("~")" class="btn btn-primary btn-lg">Back to the Home page</a>
     @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
     {
         //TODO Don't display this create link for built-in controller actions (ie blog, admin)

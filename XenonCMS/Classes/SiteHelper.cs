@@ -39,8 +39,7 @@ namespace XenonCMS.Classes
 
         public static bool SiteExists(HttpContextBase httpContext)
         {
-            // TODO
-            return false;
+            return (Caching.GetSite(httpContext) != null);
         }
 
         public static bool SlugExists(HttpContextBase httpContext, string slug)

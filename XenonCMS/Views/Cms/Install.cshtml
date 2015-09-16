@@ -24,7 +24,7 @@
     }
     else
     {
-        <p>You aren't authorized to do the installing though...please manually add your hostname/ip address to the XenonCMS..GlobalAdminIPs table.</p>
-        <p>(That table is cached, so you'll need to recycle the site to get it to see your change)</p>
+        <p>You aren't authorized to do the installing though...please login to the GlobalAdmin account to create this site</p>
+        @Html.ActionLink("Log in so I can create this site", "Login", "Account", new { returnUrl = Url.Action("Install", "Cms") }, new { @class = "btn btn-primary btn-lg" })
     }
 }

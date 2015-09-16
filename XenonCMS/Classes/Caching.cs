@@ -10,6 +10,45 @@ namespace XenonCMS.Classes
 {
     public class Caching
     {
+        #region Helper Methods
+        private static T GetCache<T>(string key)
+        {
+            return (T)HttpContext.Current.Cache[key];
+        }
+
+        protected static void RemoveCache(string key)
+        {
+            HttpContext.Current.Cache.Remove(key);
+        }
+
+        private static void SetCacheAbsolute(string key, object value)
+        {
+            SetCacheAbsolute(key, value, 30);
+        }
+
+        private static void SetCacheAbsolute(string key, object value, int minutes)
+        {
+            if (value != null)
+            {
+                HttpContext.Current.Cache.Add(key, value, null, DateTime.Now.AddMinutes(minutes), Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+            }
+        }
+
+        private static void SetCacheSliding(string key, object value)
+        {
+            SetCacheSliding(key, value, 30);
+        }
+
+        private static void SetCacheSliding(string key, object value, int minutes)
+        {
+            if (value != null)
+            {
+                HttpContext.Current.Cache.Add(key, value, null, Cache.NoAbsoluteExpiration, new TimeSpan(0, minutes, 0), CacheItemPriority.Normal, null);
+            }
+        }
+        #endregion
+
+
         public static SiteBlogPost GetBlogPost(int id, HttpContextBase httpContext)
         {
             return GetBlogPosts(httpContext).SingleOrDefault(x => x.Id == id);
@@ -20,17 +59,16 @@ namespace XenonCMS.Classes
             string RequestDomain = Globals.GetRequestDomain(httpContext);
             string CacheKey = $"{CacheKeys.BlogPosts.ToString()}-{RequestDomain}";
 
-            List<SiteBlogPost> Result = null;
-            if (httpContext.Cache[CacheKey] != null)
-            {
-                Result = (List<SiteBlogPost>)httpContext.Cache[CacheKey];
-            }
-            else
+            List<SiteBlogPost> Result = GetCache<List<SiteBlogPost>>(CacheKey);
+            if (Result == null)
             {
                 using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     Result = DB.SiteBlogPosts.Where(x => x.Site.Domain == RequestDomain).ToList();
-                    httpContext.Cache.Add(CacheKey, Result, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Normal, null);
+                    if (Result != null)
+                    {
+                        SetCacheSliding(CacheKey, Result);
+                    }
                 }
             }
 
@@ -42,17 +80,16 @@ namespace XenonCMS.Classes
             string RequestDomain = Globals.GetRequestDomain(httpContext);
             string CacheKey = $"{CacheKeys.Site.ToString()}-{RequestDomain}";
 
-            Site Result = null;
-            if (httpContext.Cache[CacheKey] != null)
-            {
-                Result = (Site)httpContext.Cache[CacheKey];
-            }
-            else
+            Site Result = GetCache<Site>(CacheKey);
+            if (Result == null)
             {
                 using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     Result = DB.Sites.SingleOrDefault(x => x.Domain == RequestDomain);
-                    httpContext.Cache.Add(CacheKey, Result, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Normal, null);
+                    if (Result != null)
+                    {
+                        SetCacheSliding(CacheKey, Result);
+                    }
                 }
             }
 
@@ -69,17 +106,16 @@ namespace XenonCMS.Classes
             string RequestDomain = Globals.GetRequestDomain(httpContext);
             string CacheKey = $"{CacheKeys.Pages.ToString()}-{RequestDomain}";
 
-            List<SitePage> Result = null;
-            if (httpContext.Cache[CacheKey] != null)
-            {
-                Result = (List<SitePage>)httpContext.Cache[CacheKey];
-            }
-            else
-            {
+            List<SitePage> Result = GetCache< List<SitePage>>(CacheKey);
+            if (Result == null)
+             {
                 using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     Result = DB.SitePages.Where(x => x.Site.Domain == RequestDomain).ToList();
-                    httpContext.Cache.Add(CacheKey, Result, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Normal, null);
+                    if (Result != null)
+                    {
+                        SetCacheSliding(CacheKey, Result);
+                    }
                 }
             }
 
@@ -90,21 +126,21 @@ namespace XenonCMS.Classes
         {
             string RequestDomain = Globals.GetRequestDomain(httpContext);
             string CacheKey = $"{CacheKeys.BlogPosts.ToString()}-{RequestDomain}";
-            httpContext.Cache.Remove(CacheKey);
+            RemoveCache(CacheKey);
         }
 
         public static void ResetPages(HttpContextBase httpContext)
         {
             string RequestDomain = Globals.GetRequestDomain(httpContext);
             string CacheKey = $"{CacheKeys.Pages.ToString()}-{RequestDomain}";
-            httpContext.Cache.Remove(CacheKey);
+            RemoveCache(CacheKey);
         }
 
         public static void ResetSite(HttpContextBase httpContext)
         {
             string RequestDomain = Globals.GetRequestDomain(httpContext);
             string CacheKey = $"{CacheKeys.Site.ToString()}-{RequestDomain}";
-            httpContext.Cache.Remove(CacheKey);
+            RemoveCache(CacheKey);
         }
 
         private enum CacheKeys
