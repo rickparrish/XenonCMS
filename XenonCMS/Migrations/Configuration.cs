@@ -37,14 +37,20 @@ namespace XenonCMS.Migrations
             if (context.Users.Count() == 0)
             {
                 var store = new UserStore<ApplicationUser>(context);
-                var manager = new UserManager<ApplicationUser>(store);
-                var user = new ApplicationUser
+                var manager = new ApplicationUserManager(store);
+                manager.UserValidator = new UserValidator<ApplicationUser>(manager)
                 {
-                    Email = $"XenonCMS@{Environment.MachineName}",
-                    UserName = $"XenonCMS@{Environment.MachineName}"
+                    AllowOnlyAlphanumericUserNames = false,
+                    RequireUniqueEmail = true
                 };
 
-                manager.Create(user, Environment.MachineName);
+                var user = new ApplicationUser
+                {
+                    Email = $"XenonCMS@localhost.localdomain",
+                    UserName = $"XenonCMS@localhost.localdomain"
+                };
+
+                manager.Create(user, Environment.MachineName.ToLower());
                 manager.AddToRole(user.Id, "GlobalAdmin");
             }            
         }

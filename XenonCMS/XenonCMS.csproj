@@ -217,7 +217,6 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\Account\Login.cs" />
     <Compile Include="ViewModels\Blog\Create.cs" />
-    <Compile Include="ViewModels\Blog\Index.cs" />
     <Compile Include="ViewModels\Blog\Edit.cs" />
     <Compile Include="ViewModels\Blog\Details.cs" />
     <Compile Include="ViewModels\Blog\Delete.cs" />

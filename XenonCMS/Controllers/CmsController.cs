@@ -82,7 +82,7 @@ namespace XenonCMS.Controllers
         {
             if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
             {
-                return RedirectToAction("Index");
+                return Redirect("~");
             }
             else
             {
@@ -99,7 +99,7 @@ namespace XenonCMS.Controllers
         {
             if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
             {
-                return RedirectToAction("Index");
+                return Redirect("~");
             }
             else
             {
@@ -185,7 +185,7 @@ namespace XenonCMS.Controllers
                         // TODOXXX Caching.ResetSidebars(ControllerContext.RequestContext.HttpContext);
                     }
 
-                    return RedirectToAction("Index");
+                    return Redirect("~");
                 }
                 else
                 {
