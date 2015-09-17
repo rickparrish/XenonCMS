@@ -40,6 +40,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                             HandleGetSimplePages(Zip, DB);
                             HandleGetSimpleWebsiteXml(Zip, DB);
                             // TODO Handle uploads (put in /SiteFiles)
+                            // TODO Handle archived versions of pages?
                         }
                     }
                 }
@@ -164,15 +165,15 @@ namespace XenonCMS.Areas.Admin.Controllers
                     SP.DateLastUpdated = Convert.ToDateTime(KVP.Value.DocumentElement.SelectSingleNode("pubDate").InnerText);
                     SP.DisplayOrder = Convert.ToInt32(KVP.Value.DocumentElement.SelectSingleNode("menuOrder").InnerText);
                     SP.Html = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("content").InnerText);
-                    SP.Layout = "NormalNoSidebar"; // TODO there is a "template" tag
+                    SP.Layout = "NormalNoSidebar"; // TODO there is a "template" tag that we could try to map to the layout tag
                     SP.ParentId = (TopLevelPages.ContainsValue(Parent)) ? TopLevelPages.Single(x => x.Value == Parent).Key : 0;
-                    SP.RequireAdmin = false; // TODO "private" tag
+                    SP.RequireAdmin = false; // TODO "private" tag that could map to requireadmin
                     SP.RightAlign = false;
                     SP.ShowInMenu = (KVP.Value.DocumentElement.SelectSingleNode("menuStatus").InnerText == "Y");
                     SP.ShowTitleOnPage = true;
                     SP.SiteId = SiteId;
                     SP.Slug = Slug;
-                    SP.Text = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename text to something more intuitive
+                    SP.Text = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename "Text" property to something more intuitive
                     SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
 
                     if (SP.Id <= 0) DB.SitePages.Add(SP);

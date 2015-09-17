@@ -102,7 +102,7 @@ namespace XenonCMS.Classes
             if (string.IsNullOrWhiteSpace(CurrentUrl)) CurrentUrl = "home";
 
             // Get database entries TODO IsInRole("SiteAdmin") isn't great because it means a siteadmin for one domain can login and be a siteadmin for another domain
-            List<NavMenuItem> NavMenuItems = Caching.GetNavMenuItems(httpContext, httpContext.User.IsInRole("GlobalAdmin") || httpContext.User.IsInRole("SiteAdmin"), rightAlign);
+            List<NavMenuItem> NavMenuItems = Caching.GetNavMenuItems(httpContext.User.IsInRole("GlobalAdmin") || httpContext.User.IsInRole("SiteAdmin"), rightAlign, httpContext);
 
             StringBuilder Result = new StringBuilder();
 
@@ -134,7 +134,7 @@ namespace XenonCMS.Classes
             return Result.ToString();
         }
 
-        private static List<NavMenuItem> GetNavMenuItems(HttpContextBase httpContext, bool isAdmin, bool rightAlign)
+        private static List<NavMenuItem> GetNavMenuItems(bool isAdmin, bool rightAlign, HttpContextBase httpContext)
         {
             string RequestDomain = Globals.GetRequestDomain(httpContext);
             string CacheKey = $"{CacheKeys.NavMenuItems.ToString()}-{RequestDomain}-{isAdmin}-{rightAlign}";
@@ -175,6 +175,21 @@ namespace XenonCMS.Classes
 
         public static SitePage GetPage(string slug, HttpContextBase httpContext)
         {
+            // Clean up the slug parameter
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                slug = "home";
+            }
+            else
+            {
+                slug = slug.ToLower().Trim('/');
+                if (slug.EndsWith("/index")) slug = slug.Substring(0, slug.LastIndexOf("/"));
+                if (string.IsNullOrWhiteSpace(slug))
+                {
+                    slug = "home";
+                }
+            }
+
             return GetPages(httpContext).SingleOrDefault(x => x.Slug == slug);
         }
 

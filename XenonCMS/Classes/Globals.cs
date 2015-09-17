@@ -1,4 +1,5 @@
 ﻿// TODO Any User.IsInRole checks also need to check if they're a SiteAdmin for the CURRENT domain!
+//      Maybe we dont let users sign in to other domains they arent SiteAdmins for?  Seems to make the most sense.
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,6 +16,26 @@ namespace XenonCMS.Classes
 {
     static public class Globals
     {
+        public static string GetAbsoluteFilename(string filename, HttpContextBase httpContext)
+        {
+            return GetAbsoluteFilename(filename, "", httpContext);
+        }
+
+        public static string GetAbsoluteFilename(string filename, string directory, HttpContextBase httpContext)
+        {
+            string SiteFilesDirectory = HostingEnvironment.MapPath("~/SiteFiles/" + GetRequestDomain(httpContext) + "/" + directory);
+            string RequestedFile = Path.Combine(SiteFilesDirectory, filename.Trim('/').Replace('/', '\\'));
+
+            if (RequestedFile.ToLower().StartsWith(SiteFilesDirectory.ToLower()))
+            {
+                return RequestedFile;
+            }
+            else
+            {
+                throw new HttpException(404, "Not found");
+            }
+        }
+
         static public string GetRequestDomain(HttpContextBase httpContext)
         {
             string Result = httpContext.Request.Url.Host.ToLower();
@@ -64,7 +85,7 @@ namespace XenonCMS.Classes
                 string Extension = "." + Regex.Match(M.Value, "data:([^/]+)/([a-z]+);base64").Groups[2].Value;
                 if (string.IsNullOrWhiteSpace(Extension)) Extension = ".png"; // Default to .png if no extension was found
                 if (Extension == ".jpeg") Extension = ".jpg";
-                string AbsoluteFilename = SiteHelper.AbsoluteFilename(httpContext, ImageId + Extension, "Images");
+                string AbsoluteFilename = GetAbsoluteFilename(ImageId + Extension, "Images", httpContext);
                 Directory.CreateDirectory(Path.GetDirectoryName(AbsoluteFilename));
                 File.WriteAllBytes(AbsoluteFilename, ImageBytes);
 

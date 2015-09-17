@@ -21,13 +21,13 @@ namespace XenonCMS.Controllers
         // GET: /Cms/Install/
         public ActionResult Install()
         {
-            if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
+            if (Caching.GetSite(ControllerContext.RequestContext.HttpContext) == null)
             {
-                return Redirect("~");
+                return View();
             }
             else
             {
-                return View();
+                return Redirect("~");
             }
         }
 
@@ -38,11 +38,7 @@ namespace XenonCMS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Install(Install model)
         {
-            if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
-            {
-                return Redirect("~");
-            }
-            else
+            if (Caching.GetSite(ControllerContext.RequestContext.HttpContext) == null)
             {
                 if (ModelState.IsValid)
                 {
@@ -133,38 +129,27 @@ namespace XenonCMS.Controllers
                     return View(model);
                 }
             }
+            else
+            {
+                return Redirect("~");
+            }
         }
 
         //
         // GET: /Cms/
         public ActionResult Slug(string slug)
         {
-            // Clean up the url parameter
-            if (string.IsNullOrWhiteSpace(slug))
-            {
-                slug = "home";
-            }
-            else
-            {
-                slug = slug.ToLower().Trim('/');
-                if (slug.EndsWith("/index")) slug = slug.Substring(0, slug.LastIndexOf("/"));
-                if (string.IsNullOrWhiteSpace(slug))
-                {
-                    slug = "home";
-                }
-            }
-
             // Get the page
             SitePage Page = Caching.GetPage(slug, ControllerContext.RequestContext.HttpContext);
             if (Page == null)
             {
-                if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
+                if (Caching.GetSite(ControllerContext.RequestContext.HttpContext) == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Install", "Cms");
                 }
                 else
                 {
-                    return RedirectToAction("Install", "Cms");
+                    return HttpNotFound();
                 }
             }
             else
