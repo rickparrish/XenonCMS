@@ -14,13 +14,13 @@ namespace XenonCMS.Controllers
         // GET: /Blog/
         public ActionResult Index()
         {
-            return View(Caching.GetBlogPosts(ControllerContext.RequestContext.HttpContext));
+            return View(Caching.GetBlogPosts());
         }
 
         // GET: /Blog/Details/5
         public ActionResult Details(int id, int? year, int? month, int? day, string slug)
         {
-            SiteBlogPost BlogPost = Caching.GetBlogPost(id, ControllerContext.RequestContext.HttpContext);
+            SiteBlogPost BlogPost = Caching.GetBlogPost(id);
             if (BlogPost == null)
             {
                 // TODOX Should we be throwing a 404 exception here?
@@ -56,7 +56,7 @@ namespace XenonCMS.Controllers
             {
                 using (var DB = new ApplicationDbContext())
                 {
-                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                    string RequestDomain = Globals.GetRequestDomain();
 
                     // View model to domain model
                     SiteBlogPost NewPost = ModelConverter.Convert<SiteBlogPost>(viewModel);
@@ -69,15 +69,15 @@ namespace XenonCMS.Controllers
                     // Transform values
                     if (string.IsNullOrWhiteSpace(viewModel.Slug)) NewPost.Slug = NewPost.Title;
                     NewPost.Slug = Globals.GetSlug(NewPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
-                    NewPost.FullPostText = Globals.SaveImagesToDisk(NewPost.FullPostText, ControllerContext.HttpContext);
-                    NewPost.PreviewText = Globals.SaveImagesToDisk(NewPost.PreviewText, ControllerContext.HttpContext);
+                    NewPost.FullPostText = Globals.SaveImagesToDisk(NewPost.FullPostText);
+                    NewPost.PreviewText = Globals.SaveImagesToDisk(NewPost.PreviewText);
 
                     // Save changes
                     DB.SiteBlogPosts.Add(NewPost);
                     DB.SaveChanges();
 
                     // Update cache
-                    Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
+                    Caching.ResetBlogPosts();
 
                     return RedirectToAction("Index");
                 }
@@ -100,7 +100,7 @@ namespace XenonCMS.Controllers
             {
                 using (var DB = new ApplicationDbContext())
                 {
-                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                    string RequestDomain = Globals.GetRequestDomain();
 
                     SiteBlogPost Post = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
                     if (Post == null)
@@ -125,7 +125,7 @@ namespace XenonCMS.Controllers
             {
                 using (var DB = new ApplicationDbContext())
                 {
-                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                    string RequestDomain = Globals.GetRequestDomain();
 
                     SiteBlogPost EditedPost = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == viewModel.Id) && (x.Site.Domain == RequestDomain));
                     if (EditedPost == null)
@@ -143,15 +143,15 @@ namespace XenonCMS.Controllers
                         // Transform values
                         if (string.IsNullOrWhiteSpace(EditedPost.Slug)) EditedPost.Slug = EditedPost.Title;
                         EditedPost.Slug = Globals.GetSlug(EditedPost.Slug, false); // No need to enforce uniqueness, since slug isn't actually used for lookup
-                        EditedPost.FullPostText = Globals.SaveImagesToDisk(EditedPost.FullPostText, ControllerContext.HttpContext);
-                        EditedPost.PreviewText = Globals.SaveImagesToDisk(EditedPost.PreviewText, ControllerContext.HttpContext);
+                        EditedPost.FullPostText = Globals.SaveImagesToDisk(EditedPost.FullPostText);
+                        EditedPost.PreviewText = Globals.SaveImagesToDisk(EditedPost.PreviewText);
 
                         // Save changes
                         DB.Entry(EditedPost).State = EntityState.Modified;
                         DB.SaveChanges();
 
                         // Update cache
-                        Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetBlogPosts();
 
                         return RedirectToAction("Index");
                     }
@@ -175,7 +175,7 @@ namespace XenonCMS.Controllers
             {
                 using (var DB = new ApplicationDbContext())
                 {
-                    string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                    string RequestDomain = Globals.GetRequestDomain();
 
                     SiteBlogPost Post = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
                     if (Post == null)
@@ -198,7 +198,7 @@ namespace XenonCMS.Controllers
         {
             using (var DB = new ApplicationDbContext())
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                string RequestDomain = Globals.GetRequestDomain();
 
                 SiteBlogPost Post = DB.SiteBlogPosts.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
                 if (Post == null)
@@ -208,7 +208,7 @@ namespace XenonCMS.Controllers
                 else
                 {
                     // Update cache
-                    Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
+                    Caching.ResetBlogPosts();
 
                     // Save changes
                     DB.SiteBlogPosts.Remove(Post);

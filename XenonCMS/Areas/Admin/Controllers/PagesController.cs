@@ -18,7 +18,7 @@ namespace XenonCMS.Areas.Admin.Controllers
         // GET: /Admin/Pages/
         public ActionResult Index()
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             return View(ModelConverter.Convert<Index>(db.SitePages.Where(x => x.Site.Domain == RequestDomain).OrderBy(x => x.ParentId).ThenBy(x => x.DisplayOrder).ToArray()));
         }
 
@@ -40,7 +40,7 @@ namespace XenonCMS.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                string RequestDomain = Globals.GetRequestDomain();
 
                 // Ensure slug is unique
                 string Slug = Globals.GetSlug(viewModel.Slug, true);
@@ -62,14 +62,14 @@ namespace XenonCMS.Areas.Admin.Controllers
 
                     // Transform values
                     NewPage.Slug = Globals.GetSlug(NewPage.Slug, true);
-                    NewPage.Html = Globals.SaveImagesToDisk(NewPage.Html, ControllerContext.HttpContext);
+                    NewPage.Html = Globals.SaveImagesToDisk(NewPage.Html);
 
                     // Save changes
                     db.SitePages.Add(NewPage);
                     db.SaveChanges();
 
                     // Update cache
-                    Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
+                    Caching.ResetPages();
 
                     return RedirectToAction("Index");
                 }
@@ -91,7 +91,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             }
             else
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                string RequestDomain = Globals.GetRequestDomain();
                 SitePage Page = db.SitePages.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
                 if (Page == null)
                 {
@@ -116,7 +116,7 @@ namespace XenonCMS.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                string RequestDomain = Globals.GetRequestDomain();
 
                 SitePage EditedPage = db.SitePages.SingleOrDefault(x => (x.Id == viewModel.Id) && (x.Site.Domain == RequestDomain));
                 if (EditedPage == null)
@@ -145,14 +145,14 @@ namespace XenonCMS.Areas.Admin.Controllers
 
                         // Transform values
                         EditedPage.Slug = NewSlug;
-                        EditedPage.Html = Globals.SaveImagesToDisk(EditedPage.Html, ControllerContext.HttpContext);
+                        EditedPage.Html = Globals.SaveImagesToDisk(EditedPage.Html);
 
                         // Save changes
                         db.Entry(EditedPage).State = EntityState.Modified;
                         db.SaveChanges();
 
                         // Update cache
-                        Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetPages();
 
                         return RedirectToAction("Index");
                     }
@@ -175,7 +175,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             }
             else
             {
-                string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                string RequestDomain = Globals.GetRequestDomain();
                 SitePage Page = db.SitePages.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
                 if (Page == null)
                 {
@@ -193,7 +193,7 @@ namespace XenonCMS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             SitePage Page = db.SitePages.SingleOrDefault(x => (x.Id == id) && (x.Site.Domain == RequestDomain));
             if (Page == null)
             {
@@ -202,7 +202,7 @@ namespace XenonCMS.Areas.Admin.Controllers
             else
             {
                 // Update cache
-                Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetPages();
 
                 // Save changes
                 db.SitePages.Remove(Page);

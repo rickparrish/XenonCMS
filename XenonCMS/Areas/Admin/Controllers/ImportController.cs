@@ -85,7 +85,7 @@ namespace XenonCMS.Areas.Admin.Controllers
 
         private void HandleGetSimpleBootstrap3SettingsXml(ZipArchive zip, ApplicationDbContext DB)
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            string RequestDomain = Globals.GetRequestDomain();
 
             // Handle the Bootstrap3Settings.xml file
             var Bootstrap3SettingsXmlFile = GetSimpleGetXmlDocuments(zip, "other/Bootstrap3Settings.xml");
@@ -98,13 +98,13 @@ namespace XenonCMS.Areas.Admin.Controllers
                 Site.Theme = KVP.Value.DocumentElement.SelectSingleNode("SelectedTheme").InnerText;
                 // TODO GetSimple has TrackingId
                 DB.SaveChanges();
-                Caching.ResetSite(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetSite();
             }
         }
 
         private void HandleGetSimpleNewsManagerPosts(ZipArchive zip, ApplicationDbContext DB)
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
 
             // Handle the NewsManager posts files
@@ -123,13 +123,13 @@ namespace XenonCMS.Areas.Admin.Controllers
                 SBP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
                 if (SBP.Id <= 0) DB.SiteBlogPosts.Add(SBP);
                 DB.SaveChanges();
-                Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetBlogPosts();
             }
         }
 
         private void HandleGetSimplePages(ZipArchive zip, ApplicationDbContext DB)
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             int SiteId = DB.Sites.Single(x => x.Domain == RequestDomain).Id;
 
             // Handle the pages files
@@ -153,7 +153,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                         // TODO Can this be used on the blog/contact header? SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
                         DB.SaveChanges();
 
-                        Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetPages();
                     }
                 }
                 else
@@ -179,7 +179,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                     if (SP.Id <= 0) DB.SitePages.Add(SP);
                     DB.SaveChanges();
 
-                    Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
+                    Caching.ResetPages();
 
                     if (string.IsNullOrWhiteSpace(Parent)) TopLevelPages.Add(SP.Id, SP.Slug);
                 }
@@ -188,7 +188,7 @@ namespace XenonCMS.Areas.Admin.Controllers
 
         private void HandleGetSimpleWebsiteXml(ZipArchive zip, ApplicationDbContext DB)
         {
-            string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+            string RequestDomain = Globals.GetRequestDomain();
 
             // Handle the Bootstrap3Settings.xml file
             var Bootstrap3SettingsXmlFile = GetSimpleGetXmlDocuments(zip, "other/website.xml");
@@ -197,7 +197,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                 var Site = DB.Sites.Single(x => x.Domain == RequestDomain);
                 Site.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("SITENAME").InnerText);
                 DB.SaveChanges();
-                Caching.ResetSite(ControllerContext.RequestContext.HttpContext);
+                Caching.ResetSite();
             }
         }
         #endregion

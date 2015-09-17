@@ -21,7 +21,7 @@ namespace XenonCMS.Controllers
         // GET: /Cms/Install/
         public ActionResult Install()
         {
-            if (Caching.GetSite(ControllerContext.RequestContext.HttpContext) == null)
+            if (Caching.GetSite() == null)
             {
                 return View();
             }
@@ -38,13 +38,13 @@ namespace XenonCMS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Install(Install model)
         {
-            if (Caching.GetSite(ControllerContext.RequestContext.HttpContext) == null)
+            if (Caching.GetSite() == null)
             {
                 if (ModelState.IsValid)
                 {
                     using (ApplicationDbContext DB = new ApplicationDbContext())
                     {
-                        string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
+                        string RequestDomain = Globals.GetRequestDomain();
                         Site Site = new Site();
                         Site.BlogPosts = new List<SiteBlogPost>();
                         Site.Pages = new List<SitePage>();
@@ -116,10 +116,10 @@ namespace XenonCMS.Controllers
                         DB.Sites.Add(Site);
                         DB.SaveChanges();
 
-                        Caching.ResetSite(ControllerContext.RequestContext.HttpContext);
-                        Caching.ResetBlogPosts(ControllerContext.RequestContext.HttpContext);
-                        Caching.ResetPages(ControllerContext.RequestContext.HttpContext);
-                        // TODOXXX Caching.ResetSidebars(ControllerContext.RequestContext.HttpContext);
+                        Caching.ResetSite();
+                        Caching.ResetBlogPosts();
+                        Caching.ResetPages();
+                        // TODOXXX Caching.ResetSidebars();
                     }
 
                     return Redirect("~");
@@ -140,10 +140,10 @@ namespace XenonCMS.Controllers
         public ActionResult Slug(string slug)
         {
             // Get the page
-            SitePage Page = Caching.GetPage(slug, ControllerContext.RequestContext.HttpContext);
+            SitePage Page = Caching.GetPage(slug);
             if (Page == null)
             {
-                if (Caching.GetSite(ControllerContext.RequestContext.HttpContext) == null)
+                if (Caching.GetSite() == null)
                 {
                     return RedirectToAction("Install", "Cms");
                 }

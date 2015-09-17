@@ -11,6 +11,6 @@
     @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
     {
         //TODO Don't display this create link for built-in controller actions (ie blog, admin)
-        <a href="~/Admin/Pages/Create?Url=@ViewContext.RequestContext.HttpContext.Request.RawUrl.Trim('/')" class="btn btn-danger btn-lg">Create this page</a>
+        <a href="~/Admin/Pages/Create?Url=@HttpUtility.UrlEncode(ViewContext.RequestContext.HttpContext.Request.RawUrl.Trim('/'))" class="btn btn-danger btn-lg">Create this page</a>
     }
 </p>

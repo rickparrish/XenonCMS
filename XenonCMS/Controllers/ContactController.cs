@@ -36,7 +36,7 @@ namespace XenonCMS.Controllers
 
                             // Send email
                             Email.From = new MailAddress(model.Email, model.Name);
-                            Email.To.Add(Caching.GetSite(ControllerContext.RequestContext.HttpContext).ContactEmail);
+                            Email.To.Add(Caching.GetSite().ContactEmail);
                             Email.Subject = model.Subject;
                             Email.Body = model.Body;
                             Email.IsBodyHtml = false;

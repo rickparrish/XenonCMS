@@ -10,20 +10,20 @@
     <meta name="author" content="" />
     <link rel="shortcut icon" href="@Url.Content("~/Content/favicon.ico")" />
 
-    <title>@ViewBag.Title - @Caching.GetSiteTitle(ViewContext.RequestContext.HttpContext)</title>
+    <title>@ViewBag.Title - @Caching.GetSiteTitle()</title>
 
     <!-- Bootstrap core CSS -->
-    @if (Caching.GetTheme(ViewContext.RequestContext.HttpContext).ToLower() == "default")
+    @if (Caching.GetTheme().ToLower() == "default")
     {
         <link id="SiteTheme" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     }
     else
     {
-        <link id="SiteTheme" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.5/@(Caching.GetTheme(ViewContext.RequestContext.HttpContext).ToLower())/bootstrap.min.css" rel="stylesheet">
+        <link id="SiteTheme" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.5/@(Caching.GetTheme().ToLower())/bootstrap.min.css" rel="stylesheet">
     }
     <script>
         // Used in xenoncms.js to detect when the css cdn failed to load
-        var SiteTheme = '@Caching.GetTheme(ViewContext.RequestContext.HttpContext)';
+        var SiteTheme = '@Caching.GetTheme()';
     </script>
 
     <!-- Custom styles for this template -->
@@ -47,7 +47,7 @@
 <body>
 
     <!-- Fixed navbar -->
-    <div class="navbar navbar-@Caching.GetNavBarStyle(ViewContext.RequestContext.HttpContext) navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-@Caching.GetNavBarStyle() navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -56,14 +56,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="@Url.Content("~")" class="navbar-brand">@Caching.GetSiteTitle(ViewContext.RequestContext.HttpContext)</a>
+                <a href="@Url.Content("~")" class="navbar-brand">@Caching.GetSiteTitle()</a>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    @Html.Raw(Caching.GetNavMenu(false, ViewContext.RequestContext.HttpContext, Url))
+                    @Html.Raw(Caching.GetNavMenu(false, Url))
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    @Html.Raw(Caching.GetNavMenu(true, ViewContext.RequestContext.HttpContext, Url))
+                    @Html.Raw(Caching.GetNavMenu(true, Url))
                     @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
                     {
                         <li class="dropdown">

@@ -16,14 +16,14 @@ namespace XenonCMS.Classes
 {
     static public class Globals
     {
-        public static string GetAbsoluteFilename(string filename, HttpContextBase httpContext)
+        public static string GetAbsoluteFilename(string filename)
         {
-            return GetAbsoluteFilename(filename, "", httpContext);
+            return GetAbsoluteFilename(filename, "");
         }
 
-        public static string GetAbsoluteFilename(string filename, string directory, HttpContextBase httpContext)
+        public static string GetAbsoluteFilename(string filename, string directory)
         {
-            string SiteFilesDirectory = HostingEnvironment.MapPath("~/SiteFiles/" + GetRequestDomain(httpContext) + "/" + directory);
+            string SiteFilesDirectory = HostingEnvironment.MapPath("~/SiteFiles/" + GetRequestDomain() + "/" + directory);
             string RequestedFile = Path.Combine(SiteFilesDirectory, filename.Trim('/').Replace('/', '\\'));
 
             if (RequestedFile.ToLower().StartsWith(SiteFilesDirectory.ToLower()))
@@ -36,9 +36,9 @@ namespace XenonCMS.Classes
             }
         }
 
-        static public string GetRequestDomain(HttpContextBase httpContext)
+        static public string GetRequestDomain()
         {
-            string Result = httpContext.Request.Url.Host.ToLower();
+            string Result = HttpContext.Current.Request.Url.Host.ToLower();
             if (Result.StartsWith("www.")) Result = Result.Substring(4);
             return Result;
         }
@@ -70,7 +70,7 @@ namespace XenonCMS.Classes
         }
 
         // From: https://github.com/madskristensen/MiniBlog
-        static public string SaveImagesToDisk(string html, HttpContextBase httpContext)
+        static public string SaveImagesToDisk(string html)
         {
             foreach (Match M in Regex.Matches(html, "src=\"(data:([^\"]+))\"(>.*?</a>)?"))
             {
@@ -85,7 +85,7 @@ namespace XenonCMS.Classes
                 string Extension = "." + Regex.Match(M.Value, "data:([^/]+)/([a-z]+);base64").Groups[2].Value;
                 if (string.IsNullOrWhiteSpace(Extension)) Extension = ".png"; // Default to .png if no extension was found
                 if (Extension == ".jpeg") Extension = ".jpg";
-                string AbsoluteFilename = GetAbsoluteFilename(ImageId + Extension, "Images", httpContext);
+                string AbsoluteFilename = GetAbsoluteFilename(ImageId + Extension, "Images");
                 Directory.CreateDirectory(Path.GetDirectoryName(AbsoluteFilename));
                 File.WriteAllBytes(AbsoluteFilename, ImageBytes);
 

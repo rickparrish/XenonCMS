@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
@@ -16,22 +17,19 @@ namespace XenonCMS.Classes
         #region Helper Methods
         private static T GetCache<T>(string key)
         {
-            return (T)HttpContext.Current.Cache[key];
+            return (T)MemoryCache.Default.Get(key);
         }
 
         protected static void RemoveCache(string key)
         {
-            HttpContext.Current.Cache.Remove(key);
+            MemoryCache.Default.Remove(key);
         }
 
         protected static void RemoveCacheMulti(string keyPrefix)
         {
-            foreach (DictionaryEntry DE in HttpContext.Current.Cache)
+            foreach (KeyValuePair<string, object> KVP in MemoryCache.Default.Where(x => x.Key.StartsWith(keyPrefix, StringComparison.OrdinalIgnoreCase)))
             {
-                if (DE.Key.ToString().StartsWith(keyPrefix, StringComparison.OrdinalIgnoreCase))
-                {
-                    RemoveCache(DE.Key.ToString());
-                }
+                RemoveCache(KVP.Key);
             }
         }
 
@@ -44,7 +42,7 @@ namespace XenonCMS.Classes
         {
             if (value != null)
             {
-                HttpContext.Current.Cache.Add(key, value, null, DateTime.Now.AddMinutes(minutes), Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+                MemoryCache.Default.Add(key, value, DateTime.Now.AddMinutes(5));
             }
         }
 
@@ -57,20 +55,23 @@ namespace XenonCMS.Classes
         {
             if (value != null)
             {
-                HttpContext.Current.Cache.Add(key, value, null, Cache.NoAbsoluteExpiration, new TimeSpan(0, minutes, 0), CacheItemPriority.Normal, null);
+                MemoryCache.Default.Add(key, value, new CacheItemPolicy()
+                {
+                    SlidingExpiration = new TimeSpan(0, minutes, 0)
+                });
             }
         }
         #endregion
 
 
-        public static SiteBlogPost GetBlogPost(int id, HttpContextBase httpContext)
+        public static SiteBlogPost GetBlogPost(int id)
         {
-            return GetBlogPosts(httpContext).SingleOrDefault(x => x.Id == id);
+            return GetBlogPosts().SingleOrDefault(x => x.Id == id);
         }
 
-        public static List<SiteBlogPost> GetBlogPosts(HttpContextBase httpContext)
+        public static List<SiteBlogPost> GetBlogPosts()
         {
-            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             string CacheKey = $"{CacheKeys.BlogPosts.ToString()}-{RequestDomain}";
 
             List<SiteBlogPost> Result = GetCache<List<SiteBlogPost>>(CacheKey);
@@ -89,20 +90,20 @@ namespace XenonCMS.Classes
             return Result;
         }
 
-        public static string GetNavBarStyle(HttpContextBase httpContext)
+        public static string GetNavBarStyle()
         {
-            return (GetSite(httpContext)?.NavBarInverted ?? false) ? "inverse" : "default";
+            return (GetSite()?.NavBarInverted ?? false) ? "inverse" : "default";
         }
 
-        public static string GetNavMenu(bool rightAlign, HttpContextBase httpContext, UrlHelper urlHelper)
+        public static string GetNavMenu(bool rightAlign, UrlHelper urlHelper)
         {
             // Get current page
-            string CurrentUrl = httpContext.Request.RawUrl.Trim('/').ToLower();
+            string CurrentUrl = HttpContext.Current.Request.RawUrl.Trim('/').ToLower();
             if (CurrentUrl.EndsWith("/index")) CurrentUrl = CurrentUrl.Substring(0, CurrentUrl.LastIndexOf("/"));
             if (string.IsNullOrWhiteSpace(CurrentUrl)) CurrentUrl = "home";
 
             // Get database entries TODO IsInRole("SiteAdmin") isn't great because it means a siteadmin for one domain can login and be a siteadmin for another domain
-            List<NavMenuItem> NavMenuItems = Caching.GetNavMenuItems(httpContext.User.IsInRole("GlobalAdmin") || httpContext.User.IsInRole("SiteAdmin"), rightAlign, httpContext);
+            List<NavMenuItem> NavMenuItems = Caching.GetNavMenuItems(HttpContext.Current.User.IsInRole("GlobalAdmin") || HttpContext.Current.User.IsInRole("SiteAdmin"), rightAlign);
 
             StringBuilder Result = new StringBuilder();
 
@@ -134,9 +135,9 @@ namespace XenonCMS.Classes
             return Result.ToString();
         }
 
-        private static List<NavMenuItem> GetNavMenuItems(bool isAdmin, bool rightAlign, HttpContextBase httpContext)
+        private static List<NavMenuItem> GetNavMenuItems(bool isAdmin, bool rightAlign)
         {
-            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             string CacheKey = $"{CacheKeys.NavMenuItems.ToString()}-{RequestDomain}-{isAdmin}-{rightAlign}";
 
             List<NavMenuItem> Result = GetCache<List<NavMenuItem>>(CacheKey);
@@ -146,14 +147,14 @@ namespace XenonCMS.Classes
                 using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     // Get nav menu
-                    var TopLevelPages = GetPages(httpContext).Where(x => x.ShowInMenu && (x.ParentId == 0) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text).ToArray();
+                    var TopLevelPages = GetPages().Where(x => x.ShowInMenu && (x.ParentId == 0) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text).ToArray();
                     foreach (var TopLevelPage in TopLevelPages)
                     {
                         // Build the menu item
                         NavMenuItem NewMenuItem = new NavMenuItem(TopLevelPage.Text, TopLevelPage.Slug);
 
                         // Determine if we have children
-                        var ChildPages = GetPages(httpContext).Where(x => x.ShowInMenu && (x.ParentId == TopLevelPage.Id) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text);
+                        var ChildPages = GetPages().Where(x => x.ShowInMenu && (x.ParentId == TopLevelPage.Id) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text);
                         if (ChildPages.Count() > 0)
                         {
                             NewMenuItem.Children = new List<NavMenuItem>();
@@ -173,7 +174,7 @@ namespace XenonCMS.Classes
             return Result;
         }
 
-        public static SitePage GetPage(string slug, HttpContextBase httpContext)
+        public static SitePage GetPage(string slug)
         {
             // Clean up the slug parameter
             if (string.IsNullOrWhiteSpace(slug))
@@ -190,17 +191,17 @@ namespace XenonCMS.Classes
                 }
             }
 
-            return GetPages(httpContext).SingleOrDefault(x => x.Slug == slug);
+            return GetPages().SingleOrDefault(x => x.Slug == slug);
         }
 
-        public static List<SitePage> GetPages(HttpContextBase httpContext)
+        public static List<SitePage> GetPages()
         {
-            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             string CacheKey = $"{CacheKeys.Pages.ToString()}-{RequestDomain}";
 
-            List<SitePage> Result = GetCache< List<SitePage>>(CacheKey);
+            List<SitePage> Result = GetCache<List<SitePage>>(CacheKey);
             if (Result == null)
-             {
+            {
                 using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
                     Result = DB.SitePages.Where(x => x.Site.Domain == RequestDomain).ToList();
@@ -214,12 +215,12 @@ namespace XenonCMS.Classes
             return Result;
         }
 
-        public static string GetSidebar(HttpContextBase httpContext)
+        public static string GetSidebar()
         {
-            string Result = ""; // TODOXXX DatabaseCache.GetSidebars(httpContext);
+            string Result = ""; // TODOXXX DatabaseCache.GetSidebars();
             if (Result == null)
             {
-                string RequestDomain = Globals.GetRequestDomain(httpContext);
+                string RequestDomain = Globals.GetRequestDomain();
 
                 using (ApplicationDbContext DB = new ApplicationDbContext())
                 {
@@ -235,15 +236,15 @@ namespace XenonCMS.Classes
                 }
 
                 if (Result == null) Result = "";
-                // TODOXXX DatabaseCache.AddSidebars(httpContext, Result);
+                // TODOXXX DatabaseCache.AddSidebars(Result);
             }
 
             return Result;
         }
 
-        public static Site GetSite(HttpContextBase httpContext)
+        public static Site GetSite()
         {
-            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             string CacheKey = $"{CacheKeys.Site.ToString()}-{RequestDomain}";
 
             Site Result = GetCache<Site>(CacheKey);
@@ -262,33 +263,33 @@ namespace XenonCMS.Classes
             return Result;
         }
 
-        public static string GetTheme(HttpContextBase httpContext)
+        public static string GetTheme()
         {
-            return GetSite(httpContext)?.Theme ?? "Cerulean";
+            return GetSite()?.Theme ?? "Cerulean";
         }
 
-        public static string GetSiteTitle(HttpContextBase httpContext)
+        public static string GetSiteTitle()
         {
-            return GetSite(httpContext)?.Title ?? Globals.GetRequestDomain(httpContext);
+            return GetSite()?.Title ?? Globals.GetRequestDomain();
         }
 
-        public static void ResetBlogPosts(HttpContextBase httpContext)
+        public static void ResetBlogPosts()
         {
-            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             string CacheKey = $"{CacheKeys.BlogPosts.ToString()}-{RequestDomain}";
             RemoveCache(CacheKey);
         }
 
-        public static void ResetPages(HttpContextBase httpContext)
+        public static void ResetPages()
         {
-            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             RemoveCache($"{CacheKeys.Pages.ToString()}-{RequestDomain}");
             RemoveCacheMulti($"{CacheKeys.NavMenuItems.ToString()}-{RequestDomain}-");
         }
 
-        public static void ResetSite(HttpContextBase httpContext)
+        public static void ResetSite()
         {
-            string RequestDomain = Globals.GetRequestDomain(httpContext);
+            string RequestDomain = Globals.GetRequestDomain();
             string CacheKey = $"{CacheKeys.Site.ToString()}-{RequestDomain}";
             RemoveCache(CacheKey);
         }
