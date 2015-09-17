@@ -158,7 +158,6 @@ namespace XenonCMS.Controllers
             SitePage Page = Caching.GetPage(slug, ControllerContext.RequestContext.HttpContext);
             if (Page == null)
             {
-                // TODO Page should never be null, so we could remove all this, or maybe just the Cms/Install part
                 if (SiteHelper.SiteExists(ControllerContext.RequestContext.HttpContext))
                 {
                     return HttpNotFound();

@@ -112,7 +112,7 @@ namespace XenonCMS.Classes
                 if (NMI.Children == null)
                 {
                     string Class = (NMI.Url.ToLower() == CurrentUrl) ? " class=\"active\"" : "";
-                    Result.AppendLine("<li" + Class + "><a href=\"" + urlHelper.Content("~/" + NMI.Url) + "\">" + NMI.Text + "</a></li>");
+                    Result.AppendLine("<li" + Class + "><a href=\"" + urlHelper.Content("~/" + (NMI.Url == "home" ? "" : NMI.Url)) + "\">" + NMI.Text + "</a></li>");
                 }
                 else
                 {

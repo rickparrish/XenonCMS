@@ -36,6 +36,8 @@ namespace XenonCMS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Create viewModel)
         {
+            // TODO Ensure slug isn't equal to the name of any controllers, or does not start with <controller>/something
+
             if (ModelState.IsValid)
             {
                 string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
@@ -110,6 +112,8 @@ namespace XenonCMS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Edit viewModel)
         {
+            // TODO Ensure slug isn't equal to the name of any controllers, or does not start with <controller>/something
+
             if (ModelState.IsValid)
             {
                 string RequestDomain = Globals.GetRequestDomain(ControllerContext.RequestContext.HttpContext);
