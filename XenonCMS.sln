@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XenonCMS", "XenonCMS\XenonCMS.csproj", "{AE54EE0E-C430-4C87-9132-EC21F347B30D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XenonCMS.Tests", "XenonCMS.Tests\XenonCMS.Tests.csproj", "{71F0CAC7-1264-440D-BB96-5A401AADD3EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{AE54EE0E-C430-4C87-9132-EC21F347B30D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE54EE0E-C430-4C87-9132-EC21F347B30D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE54EE0E-C430-4C87-9132-EC21F347B30D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71F0CAC7-1264-440D-BB96-5A401AADD3EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71F0CAC7-1264-440D-BB96-5A401AADD3EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71F0CAC7-1264-440D-BB96-5A401AADD3EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71F0CAC7-1264-440D-BB96-5A401AADD3EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
