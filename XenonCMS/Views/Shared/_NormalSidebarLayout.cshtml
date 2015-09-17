@@ -8,7 +8,7 @@
     @RenderBody()
 </div>
 <div class="col-md-4">
-    @Html.Raw(LayoutHelper.Sidebar(ViewContext.RequestContext.HttpContext))
+    @Html.Raw(Caching.GetSidebar(ViewContext.RequestContext.HttpContext))
 </div>
 
 @section Scripts {

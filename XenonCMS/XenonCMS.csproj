@@ -195,6 +195,7 @@
     <Compile Include="Areas\Admin\ViewModels\Pages\Index.cs" />
     <Compile Include="Classes\ApplicationDbContext.cs" />
     <Compile Include="Classes\Caching.cs" />
+    <Compile Include="Classes\NavMenuItem.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CmsController.cs" />
@@ -205,7 +206,6 @@
     </Compile>
     <Compile Include="Classes\DatabaseCache.cs" />
     <Compile Include="Classes\Globals.cs" />
-    <Compile Include="Classes\LayoutHelper.cs" />
     <Compile Include="Classes\ModelConverter.cs" />
     <Compile Include="Classes\SiteHelper.cs" />
     <Compile Include="Migrations\201509110135571_Initial.cs" />
@@ -312,11 +312,9 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)\..\$(ProjectName)" />
   </Target>
-  -->
 </Project>
