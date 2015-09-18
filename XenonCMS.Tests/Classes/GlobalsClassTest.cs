@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Web;
+using System.Collections.Generic;
+using System.Web.Hosting;
 
 namespace XenonCMS.Tests.Classes
 {
@@ -10,41 +12,22 @@ namespace XenonCMS.Tests.Classes
         [TestMethod]
         public void TestGetRequestDomain()
         {
-            var HCB = new HttpContextWrapper(
-                new HttpContext(
-                    new HttpRequest(null, "http://www.RickParrish.ca", null),
+            var Tests = new Dictionary<string, string>() {
+                { "RandM.ca", "randm.ca" },
+                { "Www.RandM.ca", "randm.ca" },
+                { "Sub.RandM.ca", "sub.randm.ca" },
+                { "Www.Sub.RandM.ca", "sub.randm.ca" },
+                { "Sub.Www.RandM.ca", "sub.www.randm.ca" }
+            };
+            foreach (var Test in Tests)
+            {
+                HttpContext.Current = new HttpContext(
+                    new HttpRequest(null, $"http://{Test.Key}", null),
                     new HttpResponse(null)
-                )
-            );
-            string Domain = XenonCMS.Classes.Globals.GetRequestDomain(HCB);
-            Assert.AreEqual("rickparrish.ca", Domain);
-
-            HCB = new HttpContextWrapper(
-                new HttpContext(
-                    new HttpRequest(null, "http://RickParrish.ca", null),
-                    new HttpResponse(null)
-                )
-            );
-            Domain = XenonCMS.Classes.Globals.GetRequestDomain(HCB);
-            Assert.AreEqual("rickparrish.ca", Domain);
-
-            HCB = new HttpContextWrapper(
-                new HttpContext(
-                    new HttpRequest(null, "http://www.a.b.c.d.RickParrish.ca", null),
-                    new HttpResponse(null)
-                )
-            );
-            Domain = XenonCMS.Classes.Globals.GetRequestDomain(HCB);
-            Assert.AreEqual("a.b.c.d.rickparrish.ca", Domain);
-
-            HCB = new HttpContextWrapper(
-                new HttpContext(
-                    new HttpRequest(null, "http://a.b.c.d.RickParrish.ca", null),
-                    new HttpResponse(null)
-                )
-            );
-            Domain = XenonCMS.Classes.Globals.GetRequestDomain(HCB);
-            Assert.AreEqual("a.b.c.d.rickparrish.ca", Domain);
+                );
+                string Domain = XenonCMS.Classes.Globals.GetRequestDomain();
+                Assert.AreEqual(Test.Value, Domain);
+            }
         }
     }
 }
