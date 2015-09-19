@@ -13,6 +13,10 @@
     @Html.Raw(Caching.GetSidebar())
 </div>
 
+@section Head {
+    @RenderSection("Head", false)
+}
+
 @section Scripts {
     @RenderSection("Scripts", false)
 }

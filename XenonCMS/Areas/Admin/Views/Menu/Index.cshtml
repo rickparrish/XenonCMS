@@ -3,111 +3,127 @@
     ViewBag.Title = "Menu Editor";
 }
 
-<style type="text/css">
-    body.dragging, body.dragging * {
-        cursor: move !important;
-    }
-
-    .dragged {
-        position: absolute;
-        top: 0;
-        opacity: .5;
-        z-index: 2000;
-    }
-
-    ul.nav-sortable {
-        /*margin: 0 0 9px 0;
-        min-height: 10px;*/
-    }
-
-        ul.nav-sortable li {
-            /*display: block;
-            margin: 5px;
-            padding: 5px;
-            border: 1px solid #CCC;*/
-            /*color: $linkColor;
-            background: $grayLighter;*/
-        }
-
-            ul.nav-sortable li.placeholder {
-                position: relative;
-                margin: 0;
-                padding: 0;
-                border: none;
-            }
-
-                ul.nav-sortable li.placeholder:before {
-                    position: absolute;
-                    content: "";
-                    width: 0;
-                    height: 0;
-                    margin-top: -5px;
-                    left: -5px;
-                    top: -4px;
-                    border: 5px solid transparent;
-                    border-left-color: red;
-                    border-right: none;
-                }
-</style>
-
 <h2>@ViewBag.Title</h2>
 
-<div class="row">
-    <div class="navbar navbar-@Caching.GetNavBarStyle()">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="#" class="navbar-brand">@Caching.GetSiteTitle()</a>
-            </div>
-            <div class="collapse navbar-collapse">
-                <ul class="nav navbar-nav nav-sortable">
-                    @Html.Raw(ViewBag.Menu)
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> <b class="caret"></b></a>
-                    </li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div>
-    </div>
-</div>
+<p>Drag and drop the menu items to change the order of the links.  Keep in mind there isn't a huge amount of horizontal space on small tablets, so you probably don't want too many top level items (unless the text is really short)</p>
 
-@Html.TextArea("txtJson", new { @class = "form-control", rows = "5" })
+<p>Also, you may only nest links one level deep (ie you can have a Products menu with Product 1, Product 2, etc, below it, but you cannot have a Products menu with a Free Products sub menu with Free Product 1, Free Product 2, etc, below it).  If that didn't make sense, don't worry, the system will notify you if there is a problem.</p>
+
+<ol class="vertical">
+    @Html.Raw(ViewBag.Menu)
+</ol>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <input type="submit" id="cmdSubmit" value="Save Changes" class="btn btn-primary btn-lg" />
+    <text>&nbsp;</text> <span id="lblError" class="text-danger"></span>
+    <div class="pull-right">
+        <a href="@Url.Content("~")" class="btn btn-danger btn-lg">Cancel</a>
+    </div>
+    <br /><br />
+    @Html.TextArea("txtJson", new { @class = "form-control", rows = "20" })
+}
+
+
+
+
+
+@section Head {
+    <style type="text/css">
+        body.dragging, body.dragging * {
+            cursor: move !important;
+        }
+
+        .dragged {
+            position: absolute;
+            top: 0;
+            opacity: .5;
+            z-index: 2000;
+        }
+
+        ol.vertical {
+            margin: 0 0 9px 0;
+            min-height: 10px;
+            padding: 0;
+        }
+
+            ol.vertical li {
+                display: block;
+                margin: 5px;
+                padding: 5px;
+                border: 1px solid #CCC;
+                /*color: $linkColor;*/
+                background: #eee;
+            }
+
+                ol.vertical li.placeholder {
+                    position: relative;
+                    margin: 0;
+                    padding: 0;
+                    border: none;
+                }
+
+                    ol.vertical li.placeholder:before {
+                        position: absolute;
+                        content: "";
+                        width: 0;
+                        height: 0;
+                        margin-top: -5px;
+                        left: -5px;
+                        top: -4px;
+                        border: 5px solid transparent;
+                        border-left-color: red;
+                        border-right: none;
+                    }
+
+                ol.vertical li li li {
+                    background-color: lightcoral;
+                    color: white;
+                }
+    </style>
+}
+
+
+
+
 
 @section Scripts {
     @*TODO Add timestamps to css and js with no version in filename*@
     <script src="@Url.Content("~/Scripts/jquery-sortable-min.js")"></script>
     <script>
         $(function () {
-            var nav_sortable = $("ul.nav-sortable").sortable({
-                group: 'nav-sortable',
-                nested: false,
-                vertical: false,
-                exclude: '.divider-vertical',
-                onDragStart: function ($item, container, _super) {
-                    $item.find('ul.dropdown-menu').sortable('disable');
-                    _super($item, container);
-                },
+            function UpdateJson() {
+                var data = objSortable.sortable("serialize").get();
+                var jsonString = JSON.stringify(data, null, ' ').replace(/\r/g, '').replace(/\n/g, '').replace(/\s/g, '').replace(/\[\[/g, '[').replace(/\]\]/g, ']');
+                var jsonObject = JSON.parse(jsonString);
+                jsonString = JSON.stringify(jsonObject, null, ' ');
+                $('#txtJson').text(jsonString);
+
+                // Ensure there's no >2 level menus
+                for (var i = 0; i < jsonObject.length; i++) {
+                    for (var j = 0; j < jsonObject[i].children.length; j++) {
+                        if (jsonObject[i].children[j].children.length > 0) {
+                            $('#lblError').text('Sub-menu ' + jsonObject[i].text + ' -> ' + jsonObject[i].children[j].text + ' cannot contain the ' + jsonObject[i].children[j].children[0].text + ' menu item');
+                            $('#cmdSubmit').prop('disabled', true);
+                            return;
+                        }
+                    }
+                }
+
+                $('#lblError').text('');
+                $('#cmdSubmit').prop('disabled', false);
+            }
+
+            var objSortable = $("ol.vertical").sortable({
                 onDrop: function ($item, container, _super) {
-                    $item.find('ul.dropdown-menu').sortable('enable');
-
-                    var data = nav_sortable.sortable("serialize").get();
-                    var jsonString = JSON.stringify(data, null, ' ');
-                    $('#txtJson').text(jsonString);
-
+                    UpdateJson();
                     _super($item, container);
                 }
             });
 
-            $("ul.dropdown-menu").sortable({
-                group: 'nav-sortable'
-            });
+            UpdateJson();
         });
     </script>
 }

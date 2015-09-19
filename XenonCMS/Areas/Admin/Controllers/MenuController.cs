@@ -28,27 +28,17 @@ namespace XenonCMS.Areas.Admin.Controllers
 
             foreach (var NMI in NavMenuItems)
             {
-                // Determine if we have children
-                if (NMI.Children == null)
+                Result.AppendLine("<li data-id=\"" + NMI.Id.ToString() + "\" data-text=\"" + Server.HtmlEncode(NMI.Text) + "\">" + NMI.Text);
+                Result.AppendLine("<ol>");
+                if (NMI.Children != null)
                 {
-                    Result.AppendLine("<li data-id=\"" + NMI.Id.ToString() + "\" data-slug=\"" + NMI.Url + "\" class=\"dropdown\"><a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">" + NMI.Text + " <b class=\"caret\"></b></a>");
-                    Result.AppendLine("<ul class=\"dropdown-menu\">");
-                    Result.AppendLine("</ul>");
-                    Result.AppendLine("</li>");
-                }
-                else
-                {
-                    Result.AppendLine("<li class=\"dropdown\"><a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">" + NMI.Text + " <b class=\"caret\"></b></a>");
-                    Result.AppendLine("<ul class=\"dropdown-menu\">");
-
                     foreach (var CNMI in NMI.Children)
                     {
-                        Result.AppendLine("<li data-id=\"" + NMI.Id.ToString() + "\" data-slug=\"" + NMI.Url + "\"><a href=\"#\">" + CNMI.Text + "</a></li>");
+                        Result.AppendLine("<li data-id=\"" + CNMI.Id.ToString() + "\" data-text=\"" + Server.HtmlEncode(CNMI.Text) + "\">" + CNMI.Text + "<ol></ol></li>");
                     }
-
-                    Result.AppendLine("</ul>");
-                    Result.AppendLine("</li>");
                 }
+                Result.AppendLine("</ol>");
+                Result.AppendLine("</li>");
             }
 
             ViewBag.Menu = Result.ToString();
