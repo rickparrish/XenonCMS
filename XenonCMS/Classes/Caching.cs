@@ -135,7 +135,7 @@ namespace XenonCMS.Classes
             return Result.ToString();
         }
 
-        private static List<NavMenuItem> GetNavMenuItems(bool isAdmin, bool rightAlign)
+        public static List<NavMenuItem> GetNavMenuItems(bool isAdmin, bool rightAlign)
         {
             string RequestDomain = Globals.GetRequestDomain();
             string CacheKey = $"{CacheKeys.NavMenuItems.ToString()}-{RequestDomain}-{isAdmin}-{rightAlign}";
@@ -151,7 +151,7 @@ namespace XenonCMS.Classes
                     foreach (var TopLevelPage in TopLevelPages)
                     {
                         // Build the menu item
-                        NavMenuItem NewMenuItem = new NavMenuItem(TopLevelPage.Text, TopLevelPage.Slug);
+                        NavMenuItem NewMenuItem = new NavMenuItem(TopLevelPage.Id, TopLevelPage.Text, TopLevelPage.Slug);
 
                         // Determine if we have children
                         var ChildPages = GetPages().Where(x => x.ShowInMenu && (x.ParentId == TopLevelPage.Id) && (isAdmin || !x.RequireAdmin) && (x.RightAlign == rightAlign)).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Text);
@@ -160,7 +160,7 @@ namespace XenonCMS.Classes
                             NewMenuItem.Children = new List<NavMenuItem>();
                             foreach (var ChildPage in ChildPages)
                             {
-                                NewMenuItem.Children.Add(new NavMenuItem(ChildPage.Text, ChildPage.Slug));
+                                NewMenuItem.Children.Add(new NavMenuItem(ChildPage.Id, ChildPage.Text, ChildPage.Slug));
                             }
                         }
 
