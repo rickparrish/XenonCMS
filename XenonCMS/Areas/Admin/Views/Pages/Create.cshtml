@@ -1,4 +1,5 @@
-﻿@model XenonCMS.Areas.Admin.ViewModels.Pages.Create
+﻿@using XenonCMS.Helpers
+@model XenonCMS.Areas.Admin.ViewModels.Pages.Create
 
 @{
     ViewBag.Title = "Add a new page";
@@ -137,9 +138,9 @@
     });
 </script>
 
-<link href="@Url.Content("~/Content/summernote.css")" rel="stylesheet" />
-<link href="@Url.Content("~/Content/font-awesome.min.css")" rel="stylesheet" />
-<script src="@Url.Content("~/Scripts/summernote.min.js")"></script>
+<link href="@Url.ContentWithTimestamp("~/Content/summernote.css")" rel="stylesheet" />
+<link href="@Url.ContentWithTimestamp("~/Content/font-awesome.min.css")" rel="stylesheet" />
+<script src="@Url.ContentWithTimestamp("~/Scripts/summernote.min.js")"></script>
 <script>
     $(document).ready(function () {
         $('.summernote').summernote({

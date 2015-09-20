@@ -1,4 +1,5 @@
-﻿@using XenonCMS.Classes
+﻿@using XenonCMS.Helpers
+@using XenonCMS.Classes
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link rel="shortcut icon" href="@Url.Content("~/Content/favicon.ico")" />
+    <link rel="shortcut icon" href="@Url.ContentWithTimestamp("~/Content/favicon.ico")" />
 
     <title>@ViewBag.Title - @Caching.GetSiteTitle()</title>
 
@@ -27,12 +28,12 @@
     </script>
 
     <!-- Custom styles for this template -->
-    <link href="@Url.Content("~/Content/xenoncms.css")" rel="stylesheet" />
+    <link href="@Url.ContentWithTimestamp("~/Content/xenoncms.css")" rel="stylesheet" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="@Url.Content("~/Scripts/html5shiv.js")"></script>
-      <script src="@Url.Content("~/Scripts/respond.min.js")"></script>
+      <script src="@Url.ContentWithTimestamp("~/Scripts/html5shiv.js")"></script>
+      <script src="@Url.ContentWithTimestamp("~/Scripts/respond.min.js")"></script>
     <![endif]-->
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -41,7 +42,7 @@
     <script>window.jQuery || document.write('<script src="/Scripts/jquery-1.11.3.min.js"><\/script>')</script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script>$.fn.modal || document.write('<script src="/Scripts/bootstrap.min.js"><\/script>')</script>
-    <script src="@Url.Content("~/Scripts/xenoncms.js")"></script>
+    <script src="@Url.ContentWithTimestamp("~/Scripts/xenoncms.js")"></script>
 
     @RenderSection("Head", false)
 </head>

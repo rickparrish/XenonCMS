@@ -1,4 +1,5 @@
-﻿@using XenonCMS.Classes
+﻿@using XenonCMS.Helpers
+@using XenonCMS.Classes
 @{
     ViewBag.Title = "Menu Editor";
 }
@@ -179,7 +180,7 @@
 
 @section Scripts {
     @*TODO Add timestamps to css and js with no version in filename*@
-    <script src="@Url.Content("~/Scripts/jquery-sortable-min.js")"></script>
+    <script src="@Url.ContentWithTimestamp("~/Scripts/jquery-sortable-min.js")"></script>
     <script>
         $(function () {
             function UpdateJson() {

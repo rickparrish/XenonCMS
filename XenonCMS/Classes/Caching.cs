@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
@@ -268,6 +269,21 @@ namespace XenonCMS.Classes
             return GetSite()?.Theme ?? "Cerulean";
         }
 
+        public static long GetTimestamp(string path)
+        {
+            string RequestDomain = Globals.GetRequestDomain();
+            string CacheKey = $"{CacheKeys.Timestamp.ToString()}-{path}";
+
+            long? Result = GetCache<long?>(CacheKey);
+            if (Result == null)
+            {
+                Result = File.GetLastWriteTimeUtc(path).ToFileTime();
+                SetCacheAbsolute(CacheKey, Result);
+            }
+
+            return Convert.ToInt64(Result);
+        }
+
         public static string GetSiteTitle()
         {
             return GetSite()?.Title ?? Globals.GetRequestDomain();
@@ -299,7 +315,8 @@ namespace XenonCMS.Classes
             BlogPosts,
             NavMenuItems,
             Pages,
-            Site
+            Site,
+            Timestamp
         }
     }
 }

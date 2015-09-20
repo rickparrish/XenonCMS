@@ -2,7 +2,6 @@
 // TODO Every time a page is updated, put it in a history table so old versions can be restored
 // TODO Add ability to import from GetSimple (maybe have import happen at Install time?)
 // TODO Add Edit button to pages if logged in as admin.  After edit is done, return to page.  Need to handle changed slug
-// TODO Maybe don't even need a catch-all for cms urls if rammfar can catch and handle 404s
 // TODO Log 404s so then a dashboard page can be created showing common 404s.  Add option to ignore certain ones (ie maybe want to ignore robots.txt or favicon.ico instead of putting one in place)
 using System;
 using System.Collections.Generic;

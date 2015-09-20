@@ -199,6 +199,7 @@
     <Compile Include="Classes\ApplicationDbContext.cs" />
     <Compile Include="Classes\Caching.cs" />
     <Compile Include="Classes\NavMenuItem.cs" />
+    <Compile Include="Helpers\UrlHelperExtensions.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CmsController.cs" />
