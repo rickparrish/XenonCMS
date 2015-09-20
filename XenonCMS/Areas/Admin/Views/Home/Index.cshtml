@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewBag.Title = "Admin Menu";
+}
+
+<h2>Admin Menu</h2>
+
+<ul>
+    <li><a href="@Url.Action("Index", "Settings")">Settings</a></li>
+    <li><a href="@Url.Action("Index", "Menu")">Menu Editor</a></li>
+    <li><a href="@Url.Action("Index", "Pages")">Page Editor</a></li>
+    <li><a href="@Url.Action("GetSimple", "Import")">Import from GetSimple</a></li>
+    <li>Logout</li>
+</ul>

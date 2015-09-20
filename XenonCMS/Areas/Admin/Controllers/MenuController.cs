@@ -17,12 +17,19 @@ namespace XenonCMS.Areas.Admin.Controllers
         // GET: /Admin/Pages/
         public ActionResult Index()
         {
+            ViewBag.MenuLeft = GetNavMenuItems(false);
+            ViewBag.MenuRight = GetNavMenuItems(true);
+
+            return View();
+        }
+
+        private string GetNavMenuItems(bool rightAligned)
+        {
             // TODO Include hidden items (flag them as such)
             // TODO Flag admin items as such
 
             // Get database entries
-            // TODO This only handles left-aligned items.  Should we allow right-aligned, or keep that just for admin?
-            List<NavMenuItem> NavMenuItems = Caching.GetNavMenuItems(true, false);
+            List<NavMenuItem> NavMenuItems = Caching.GetNavMenuItems(true, rightAligned);
 
             StringBuilder Result = new StringBuilder();
 
@@ -41,9 +48,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                 Result.AppendLine("</li>");
             }
 
-            ViewBag.Menu = Result.ToString();
-
-            return View();
+            return Result.ToString();
         }
     }
 }

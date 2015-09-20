@@ -5,13 +5,25 @@
 
 <h2>@ViewBag.Title</h2>
 
-<p>Drag and drop the menu items to change the order of the links.  Keep in mind there isn't a huge amount of horizontal space on small tablets, so you probably don't want too many top level items (unless the text is really short)</p>
+<p>Drag and drop the items below to re-arrange your navigation menu.  There are live previews further down this page so you can see what your changes will look like.</p>
 
-<p>Also, you may only nest links one level deep (ie you can have a Products menu with Product 1, Product 2, etc, below it, but you cannot have a Products menu with a Free Products sub menu with Free Product 1, Free Product 2, etc, below it).  If that didn't make sense, don't worry, the system will notify you if there is a problem.</p>
+<p>Only one level of nesting is allowed.  Items nested too deep will appear in red, and the previews will fail to update.  You'll have to fix the nesting to save your changes.</p>
 
-<ol class="vertical">
-    @Html.Raw(ViewBag.Menu)
-</ol>
+<div class="row">
+    <div class="col-sm-6">
+        <h3>Left side menu items</h3>
+        <ol class="vertical menu-left">
+            @Html.Raw(ViewBag.MenuLeft)
+        </ol>
+    </div>
+
+    <div class="col-sm-6">
+        <h3>Right side menu items</h3>
+        <ol class="vertical menu-right">
+            @Html.Raw(ViewBag.MenuRight)
+        </ol>
+    </div>
+</div>
 
 <div class="row">
     <h3>Previews</h3>
@@ -92,10 +104,13 @@
     <input type="submit" id="cmdSubmit" value="Save Changes" class="btn btn-success btn-lg" />
     <text>&nbsp;</text> <span id="lblError" class="text-danger"></span>
     <div class="pull-right">
-        <a href="@Url.Content("~")" class="btn btn-danger btn-lg">Cancel</a>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-danger btn-lg">Cancel</a>
     </div>
-    <br /><br />
-    @Html.TextArea("txtJson", new { @class = "hide form-control", rows = "20" })
+
+    <div class="hide">
+        <div class="col-sm-6">@Html.TextArea("txtMenuLeft", new { @class = "form-control", rows = "20" })</div>
+        <div class="col-sm-6">@Html.TextArea("txtMenuRight", new { @class = "form-control", rows = "20" })</div>
+    </div>
 }
 
 <br />
@@ -176,11 +191,16 @@
                 $('#navbar-preview-lg .navbar-left').empty();
                 $('#navbar-preview-lg .navbar-right').empty();
 
-                var data = objSortable.sortable("serialize").get();
+                // Reset errors
+                $('#lblError').text('');
+                $('#cmdSubmit').prop('disabled', false);
+
+                // Handle left side
+                var data = objMenuLeft.sortable("serialize").get();
                 var jsonString = JSON.stringify(data, null, ' ').replace(/\r/g, '').replace(/\n/g, '').replace(/\s/g, '').replace(/\[\[/g, '[').replace(/\]\]/g, ']');
                 var jsonObject = JSON.parse(jsonString);
                 jsonString = JSON.stringify(jsonObject, null, ' ');
-                $('#txtJson').text(jsonString);
+                $('#txtMenuLeft').text(jsonString);
 
                 // Ensure there's no >2 level menus
                 for (var i = 0; i < jsonObject.length; i++) {
@@ -192,9 +212,6 @@
                         }
                     }
                 }
-
-                $('#lblError').text('');
-                $('#cmdSubmit').prop('disabled', false);
 
                 // Update previews
                 for (var i = 0; i < jsonObject.length; i++) {
@@ -214,9 +231,55 @@
                     $('#navbar-preview-md .navbar-left').append(TopLevelItem);
                     $('#navbar-preview-lg .navbar-left').append(TopLevelItem);
                 }
+
+                // Handle right side
+                var data = objMenuRight.sortable("serialize").get();
+                var jsonString = JSON.stringify(data, null, ' ').replace(/\r/g, '').replace(/\n/g, '').replace(/\s/g, '').replace(/\[\[/g, '[').replace(/\]\]/g, ']');
+                var jsonObject = JSON.parse(jsonString);
+                jsonString = JSON.stringify(jsonObject, null, ' ');
+                $('#txtMenuRight').text(jsonString);
+
+                // Ensure there's no >2 level menus
+                for (var i = 0; i < jsonObject.length; i++) {
+                    for (var j = 0; j < jsonObject[i].children.length; j++) {
+                        if (jsonObject[i].children[j].children.length > 0) {
+                            $('#lblError').text('Sub-menu ' + jsonObject[i].text + ' -> ' + jsonObject[i].children[j].text + ' cannot contain the ' + jsonObject[i].children[j].children[0].text + ' menu item');
+                            $('#cmdSubmit').prop('disabled', true);
+                            return;
+                        }
+                    }
+                }
+
+                // Update previews
+                for (var i = 0; i < jsonObject.length; i++) {
+                    var TopLevelItem = '';
+                    if (jsonObject[i].children.length === 0) {
+                        TopLevelItem = '<li><a href="#">' + jsonObject[i].text + '</a></li>';
+                    } else {
+                        var ChildItems = '';
+                        for (var j = 0; j < jsonObject[i].children.length; j++) {
+                            ChildItems += '<li><a href="#">' + jsonObject[i].children[j].text + '</a></li>';
+                        }
+
+                        TopLevelItem = '<li class="dropdown"><a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false">' + jsonObject[i].text + ' <b class="caret"></b></a><ul class="dropdown-menu">' + ChildItems + '</ul></li>';
+                    }
+
+                    $('#navbar-preview-sm .navbar-right').append(TopLevelItem);
+                    $('#navbar-preview-md .navbar-right').append(TopLevelItem);
+                    $('#navbar-preview-lg .navbar-right').append(TopLevelItem);
+                }
             }
 
-            var objSortable = $("ol.vertical").sortable({
+            var objMenuLeft = $("ol.menu-left").sortable({
+                group: 'nav',
+                onDrop: function ($item, container, _super) {
+                    UpdateJson();
+                    _super($item, container);
+                }
+            });
+
+            var objMenuRight = $("ol.menu-right").sortable({
+                group: 'nav',
                 onDrop: function ($item, container, _super) {
                     UpdateJson();
                     _super($item, container);

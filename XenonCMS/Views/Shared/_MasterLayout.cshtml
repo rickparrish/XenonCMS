@@ -66,23 +66,6 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @Html.Raw(Caching.GetNavMenu(true, Url))
-                    @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
-                    {
-                        <li class="dropdown">
-                            <a href="#" data-toggle="dropdown" class="dropdown-toggle">Admin <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@Url.Content("~/Admin/Settings")">Settings</a></li>
-                                <li class="divider"></li>
-                                <li><a href="@Url.Content("~/Admin/Pages")">Page Editor</a></li>
-                                <li class="divider"></li>
-                                <li><a href="@Url.Content("~/Admin/Import/GetSimple")">Import from GetSimple</a></li>
-                            </ul>
-                        </li>
-                    }
-                    else
-                    {
-                        <li><a href="@Url.Content("~/Account/Login")">Admin</a></li>
-                    }
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
@@ -97,7 +80,10 @@
 
     <footer class="footer">
         <div class="container">
-            <p class="text-muted"><a href="http://www.randm.ca/products/xenoncms">XenonCMS</a> &copy; @DateTime.Now.Year - <a href="http://www.rickparrish.ca">Rick Parrish</a>, <a href="http://www.randm.ca">R&amp;M Software</a></p>
+            <p class="text-muted">
+                <a href="http://www.randm.ca/products/xenoncms">XenonCMS</a> &copy; @DateTime.Now.Year - <a href="http://www.rickparrish.ca">Rick Parrish</a>, <a href="http://www.randm.ca">R&amp;M Software</a>
+                <span class="pull-right"><a href="@Url.Action("Index", "Home", new { area = "Admin" })">Admin</a></span>
+            </p>
         </div>
     </footer>
 

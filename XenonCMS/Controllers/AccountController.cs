@@ -45,7 +45,7 @@ namespace XenonCMS.Controllers
                     {
                         return Redirect(returnUrl);
                     }
-                    return Redirect("~");
+                    return RedirectToAction("Index", "Home", new { area = "Admin" });
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.Failure:
