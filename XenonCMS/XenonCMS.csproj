@@ -215,6 +215,10 @@
     <Compile Include="Migrations\201509110135571_Initial.Designer.cs">
       <DependentUpon>201509110135571_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509202308219_SitePage add Parent and Child navigation, Text to LinkText.cs" />
+    <Compile Include="Migrations\201509202308219_SitePage add Parent and Child navigation, Text to LinkText.Designer.cs">
+      <DependentUpon>201509202308219_SitePage add Parent and Child navigation, Text to LinkText.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Startup.cs" />
@@ -291,6 +295,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201509110135571_Initial.resx">
       <DependentUpon>201509110135571_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509202308219_SitePage add Parent and Child navigation, Text to LinkText.resx">
+      <DependentUpon>201509202308219_SitePage add Parent and Child navigation, Text to LinkText.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

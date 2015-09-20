@@ -21,5 +21,13 @@ namespace XenonCMS.Models
         public virtual List<SiteBlogPost> BlogPosts { get; set; }
         public virtual List<SitePage> Pages { get; set; }
         public virtual List<GlobalSidebar> GlobalSidebars { get; set; }
+
+        public Site()
+        {
+            Admins = new List<ApplicationUser>();
+            BlogPosts = new List<SiteBlogPost>();
+            Pages = new List<SitePage>();
+            GlobalSidebars = new List<GlobalSidebar>();
+        }
     }
 }

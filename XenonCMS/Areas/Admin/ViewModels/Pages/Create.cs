@@ -49,11 +49,11 @@ namespace XenonCMS.Areas.Admin.ViewModels.Pages
 
         internal void GetParents(ApplicationDbContext db)
         {
-            var ParentItems = db.SitePages.Where(x => x.ParentId == 0).OrderBy(x => x.Text).ToList();
+            var ParentItems = db.SitePages.Where(x => x.ParentId == null).OrderBy(x => x.LinkText).ToList();
 
             SitePage NoParent = new SitePage();
             NoParent.Id = 0;
-            NoParent.Text = "No Parent";
+            NoParent.LinkText = "No Parent";
             ParentItems.Insert(0, NoParent);
 
             Parents = new SelectList(ParentItems, "Id", "Text");

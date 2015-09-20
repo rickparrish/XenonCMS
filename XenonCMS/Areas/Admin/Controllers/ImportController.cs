@@ -173,7 +173,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                     SP.ShowTitleOnPage = true;
                     SP.SiteId = SiteId;
                     SP.Slug = Slug;
-                    SP.Text = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename "Text" property to something more intuitive
+                    SP.LinkText = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename "Text" property to something more intuitive
                     SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
 
                     if (SP.Id <= 0) DB.SitePages.Add(SP);
