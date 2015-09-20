@@ -13,20 +13,93 @@
     @Html.Raw(ViewBag.Menu)
 </ol>
 
+<div class="row">
+    <h3>Previews</h3>
+    <nav class="navbar navbar-@Caching.GetNavBarStyle()" style="width: 750px;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button data-target="#navbar-preview-sm" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#" class="navbar-brand">@Caching.GetSiteTitle()</a>
+            </div>
+
+            <div id="navbar-preview-sm" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    @*Left nav will be added here*@
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    @*Right nav will be added here*@
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="navbar navbar-@Caching.GetNavBarStyle()" style="width: 970px;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button data-target="#navbar-preview-md" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#" class="navbar-brand">@Caching.GetSiteTitle()</a>
+            </div>
+
+            <div id="navbar-preview-md" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    @*Left nav will be added here*@
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    @*Right nav will be added here*@
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="navbar navbar-@Caching.GetNavBarStyle()" style="width: 1170px;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button data-target="#navbar-preview-lg" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#" class="navbar-brand">@Caching.GetSiteTitle()</a>
+            </div>
+
+            <div id="navbar-preview-lg" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    @*Left nav will be added here*@
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    @*Right nav will be added here*@
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-    <input type="submit" id="cmdSubmit" value="Save Changes" class="btn btn-primary btn-lg" />
+    <input type="submit" id="cmdSubmit" value="Save Changes" class="btn btn-success btn-lg" />
     <text>&nbsp;</text> <span id="lblError" class="text-danger"></span>
     <div class="pull-right">
         <a href="@Url.Content("~")" class="btn btn-danger btn-lg">Cancel</a>
     </div>
     <br /><br />
-    @Html.TextArea("txtJson", new { @class = "form-control", rows = "20" })
+    @Html.TextArea("txtJson", new { @class = "hide form-control", rows = "20" })
 }
 
-
+<br />
+<p class="small">Drag &amp; Drop support courtesy of <a href="http://johnny.github.io/jquery-sortable" target="_blank">the amazing jQuery Sortable</a></p>
 
 
 
@@ -95,6 +168,14 @@
     <script>
         $(function () {
             function UpdateJson() {
+                // Clear previews
+                $('#navbar-preview-sm .navbar-left').empty();
+                $('#navbar-preview-sm .navbar-right').empty();
+                $('#navbar-preview-md .navbar-left').empty();
+                $('#navbar-preview-md .navbar-right').empty();
+                $('#navbar-preview-lg .navbar-left').empty();
+                $('#navbar-preview-lg .navbar-right').empty();
+
                 var data = objSortable.sortable("serialize").get();
                 var jsonString = JSON.stringify(data, null, ' ').replace(/\r/g, '').replace(/\n/g, '').replace(/\s/g, '').replace(/\[\[/g, '[').replace(/\]\]/g, ']');
                 var jsonObject = JSON.parse(jsonString);
@@ -114,6 +195,25 @@
 
                 $('#lblError').text('');
                 $('#cmdSubmit').prop('disabled', false);
+
+                // Update previews
+                for (var i = 0; i < jsonObject.length; i++) {
+                    var TopLevelItem = '';
+                    if (jsonObject[i].children.length === 0) {
+                        TopLevelItem = '<li><a href="#">' + jsonObject[i].text + '</a></li>';
+                    } else {
+                        var ChildItems = '';
+                        for (var j = 0; j < jsonObject[i].children.length; j++) {
+                            ChildItems += '<li><a href="#">' + jsonObject[i].children[j].text + '</a></li>';
+                        }
+
+                        TopLevelItem = '<li class="dropdown"><a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false">' + jsonObject[i].text + ' <b class="caret"></b></a><ul class="dropdown-menu">' + ChildItems + '</ul></li>';
+                    }
+
+                    $('#navbar-preview-sm .navbar-left').append(TopLevelItem);
+                    $('#navbar-preview-md .navbar-left').append(TopLevelItem);
+                    $('#navbar-preview-lg .navbar-left').append(TopLevelItem);
+                }
             }
 
             var objSortable = $("ol.vertical").sortable({

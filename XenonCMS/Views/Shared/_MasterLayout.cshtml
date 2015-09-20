@@ -69,7 +69,7 @@
                     @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
                     {
                         <li class="dropdown">
-                            <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> <b class="caret"></b></a>
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle">Admin <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><a href="@Url.Content("~/Admin/Settings")">Settings</a></li>
                                 <li class="divider"></li>
@@ -81,7 +81,7 @@
                     }
                     else
                     {
-                        <li><a href="@Url.Content("~/Account/Login")"><span class="glyphicon glyphicon-user"></span></a></li>
+                        <li><a href="@Url.Content("~/Account/Login")">Admin</a></li>
                     }
                 </ul>
             </div><!--/.nav-collapse -->
