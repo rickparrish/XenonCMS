@@ -39,10 +39,10 @@
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.Text, new { @class = "control-label" })
+                @Html.LabelFor(model => model.LinkText, new { @class = "control-label" })
                 <div>
-                    @Html.TextBoxFor(model => model.Text, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Text)
+                    @Html.TextBoxFor(model => model.LinkText, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.LinkText)
                 </div>
             </div>
 
@@ -78,14 +78,6 @@
         </div>
 
         <div id="tabAppearance" class="tab-pane col-xs-12">
-            <div class="form-group">
-                @Html.LabelFor(model => model.Layouts, new { @class = "control-label" })
-                <div>
-                    @Html.DropDownListFor(model => model.Layout, Model.Layouts, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Layout)
-                </div>
-            </div>
-
             <div class="form-group">
                 @Html.LabelFor(model => model.ShowTitleOnPage, new { @class = "control-label" })
                 <div>

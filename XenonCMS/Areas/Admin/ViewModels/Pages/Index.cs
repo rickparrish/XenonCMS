@@ -9,8 +9,7 @@ namespace XenonCMS.Areas.Admin.ViewModels.Pages
         public int DisplayOrder { get; set; }
         public string Html { get; set; }
         public int Id { get; set; }
-        public string Layout { get; set; }
-        public string Text { get; set; }
+        public string LinkText { get; set; }
         public string Slug { get; set; }
         public int ParentId { get; set; }
         public bool RequireAdmin { get; set; }

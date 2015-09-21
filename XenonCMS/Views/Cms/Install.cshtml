@@ -2,29 +2,30 @@
 @model XenonCMS.ViewModels.Cms.Install
 
 @{
-    Layout = "~/Views/Shared/_JumbotronNoSidebarLayout.cshtml";
     ViewBag.Title = "Install XenonCMS";
 }
 
-<h2>It looks like XenonCMS needs to be installed for this domain!</h2>
-<hr />
+<div class="jumbotron">
+    <h2>It looks like XenonCMS needs to be installed for this domain!</h2>
+    <hr />
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-
-    //TODO Add elements to allow specifying settings (ie checkbox to enable/disable blog, contact (which will auto-create the pages))
-    //TODO Also inputs like contact email address, site title, etc
-
-    if (User.IsInRole("GlobalAdmin"))
+    @using (Html.BeginForm())
     {
-        <p>I'm lazy, so I haven't gotten around to creating the install page yet.  For now, just click the button below and then go supply the values in the database manually.</p>
+        @Html.AntiForgeryToken()
 
-        <input type="submit" value="Install on this site now" class="btn btn-primary btn-lg" />
+        //TODO Add elements to allow specifying settings (ie checkbox to enable/disable blog, contact (which will auto-create the pages))
+        //TODO Also inputs like contact email address, site title, etc
+
+        if (User.IsInRole("GlobalAdmin"))
+        {
+            <p>I'm lazy, so I haven't gotten around to creating the install page yet.  For now, just click the button below and then go supply the values in the database manually.</p>
+
+            <input type="submit" value="Install on this site now" class="btn btn-primary btn-lg" />
+        }
+        else
+        {
+            <p>You aren't authorized to do the installing though...please login to the GlobalAdmin account to create this site</p>
+            @Html.ActionLink("Log in so I can create this site", "Login", "Account", new { returnUrl = Url.Action("Install", "Cms") }, new { @class = "btn btn-primary btn-lg" })
+        }
     }
-    else
-    {
-        <p>You aren't authorized to do the installing though...please login to the GlobalAdmin account to create this site</p>
-        @Html.ActionLink("Log in so I can create this site", "Login", "Account", new { returnUrl = Url.Action("Install", "Cms") }, new { @class = "btn btn-primary btn-lg" })
-    }
-}
+</div>

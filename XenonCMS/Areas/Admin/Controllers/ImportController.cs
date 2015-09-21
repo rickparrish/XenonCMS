@@ -165,7 +165,6 @@ namespace XenonCMS.Areas.Admin.Controllers
                     SP.DateLastUpdated = Convert.ToDateTime(KVP.Value.DocumentElement.SelectSingleNode("pubDate").InnerText);
                     SP.DisplayOrder = Convert.ToInt32(KVP.Value.DocumentElement.SelectSingleNode("menuOrder").InnerText);
                     SP.Html = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("content").InnerText);
-                    SP.Layout = "NormalNoSidebar"; // TODO there is a "template" tag that we could try to map to the layout tag
                     SP.ParentId = (TopLevelPages.ContainsValue(Parent)) ? TopLevelPages.Single(x => x.Value == Parent).Key : 0;
                     SP.RequireAdmin = false; // TODO "private" tag that could map to requireadmin
                     SP.RightAlign = false;
@@ -173,7 +172,7 @@ namespace XenonCMS.Areas.Admin.Controllers
                     SP.ShowTitleOnPage = true;
                     SP.SiteId = SiteId;
                     SP.Slug = Slug;
-                    SP.LinkText = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText); // TODO Rename "Text" property to something more intuitive
+                    SP.LinkText = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("menu").InnerText);
                     SP.Title = HttpUtility.HtmlDecode(KVP.Value.DocumentElement.SelectSingleNode("title").InnerText);
 
                     if (SP.Id <= 0) DB.SitePages.Add(SP);

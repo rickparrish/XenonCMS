@@ -65,14 +65,13 @@ namespace XenonCMS.Controllers
                             DateAdded = DateTime.Now,
                             DateLastUpdated = DateTime.Now,
                             DisplayOrder = 1,
-                            Html = "XenonCMS has been successfully installed and is ready for use on " + RequestDomain + "!",
-                            Layout = "JumbotronNoSidebar",
+                            Html = "<div class=\"jumbotron\"><h2>XenonCMS Installed</h2><p>XenonCMS has been successfully installed and is ready for use on " + RequestDomain + "!</p></div>",
                             LinkText = "Home",
                             ParentId = null,
                             RequireAdmin = false,
                             RightAlign = false,
                             ShowInMenu = true,
-                            ShowTitleOnPage = true,
+                            ShowTitleOnPage = false,
                             Slug = "home",
                             Title = "XenonCMS Installed"
                         });
@@ -83,7 +82,6 @@ namespace XenonCMS.Controllers
                             DateLastUpdated = DateTime.Now,
                             DisplayOrder = 2,
                             Html = null,
-                            Layout = "NormalSidebar",
                             LinkText = "Blog",
                             ParentId = null,
                             RequireAdmin = false,
@@ -100,7 +98,6 @@ namespace XenonCMS.Controllers
                             DateLastUpdated = DateTime.Now,
                             DisplayOrder = 3,
                             Html = null,
-                            Layout = "NormalSidebar",
                             LinkText = "Contact",
                             ParentId = null,
                             RequireAdmin = false,
@@ -152,7 +149,6 @@ namespace XenonCMS.Controllers
             }
             else
             {
-                ViewBag.Layout = Page.Layout;
                 ViewBag.Title = Page.Title;
                 ViewBag.ShowTitleOnPage = Page.ShowTitleOnPage;
                 ViewBag.Html = Page.Html;

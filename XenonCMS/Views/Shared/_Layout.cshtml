@@ -75,7 +75,12 @@
     <!-- Begin page content -->
     <div class="container">
         <div class="row">
-            @RenderBody()
+            <div class="@(ViewBag.BodyClass ?? "col-sm-8")">
+                @RenderBody()
+            </div>
+            <div class="@(ViewBag.SidebarClass ?? "col-sm-4")">
+                @Html.Raw(Caching.GetSidebar())
+            </div>
         </div>
     </div>
 

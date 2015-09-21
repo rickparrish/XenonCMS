@@ -179,7 +179,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\_MasterLayout.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Errors\NotAuthorized.cshtml" />
     <Content Include="Views\Errors\NotFound.cshtml" />
   </ItemGroup>
@@ -219,6 +219,10 @@
     <Compile Include="Migrations\201509202308219_SitePage add Parent and Child navigation, Text to LinkText.Designer.cs">
       <DependentUpon>201509202308219_SitePage add Parent and Child navigation, Text to LinkText.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509202351454_No more layouts.cs" />
+    <Compile Include="Migrations\201509202351454_No more layouts.Designer.cs">
+      <DependentUpon>201509202351454_No more layouts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Startup.cs" />
@@ -257,15 +261,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="Views\Shared\_JumbotronNoSidebarLayout.cshtml" />
-    <Content Include="Views\Shared\_NormalSidebarLayout.cshtml" />
-    <Content Include="Views\Shared\_NormalNoSidebarLayout.cshtml" />
     <Content Include="Views\Contact\Index.cshtml" />
     <Content Include="Views\Cms\Install.cshtml" />
     <Content Include="Views\Errors\BadRequest.cshtml" />
     <Content Include="Views\Errors\InternalServerError.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Boolean.cshtml" />
-    <Content Include="Views\Shared\_JumbotronSidebarLayout.cshtml" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
@@ -298,6 +298,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509202308219_SitePage add Parent and Child navigation, Text to LinkText.resx">
       <DependentUpon>201509202308219_SitePage add Parent and Child navigation, Text to LinkText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509202351454_No more layouts.resx">
+      <DependentUpon>201509202351454_No more layouts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

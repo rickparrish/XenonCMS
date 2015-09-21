@@ -6,7 +6,7 @@ namespace XenonCMS.Areas.Admin.ViewModels.Pages
     public class Delete
     {
         [Display(Name = "Link text")]
-        public string Text { get; set; }
+        public string LinkText { get; set; }
         public string Slug { get; set; }
         [Display(Name = "Page heading")]
         public string Title { get; set; }

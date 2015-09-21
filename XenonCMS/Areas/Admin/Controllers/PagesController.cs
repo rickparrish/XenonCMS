@@ -26,7 +26,6 @@ namespace XenonCMS.Areas.Admin.Controllers
         public ActionResult Create()
         {
             var ViewModel = new Create();
-            ViewModel.GetLayouts();
             ViewModel.GetParents(db);
             return View(ViewModel);
         }
@@ -47,7 +46,6 @@ namespace XenonCMS.Areas.Admin.Controllers
                 if (db.SitePages.Any(x => (x.Site.Domain == RequestDomain) && (x.Slug == Slug)))
                 {
                     ModelState.AddModelError("SlugAlreadyUsed", "Slug has already been used");
-                    viewModel.GetLayouts();
                     viewModel.GetParents(db);
                     return View(viewModel);
                 }
@@ -61,8 +59,9 @@ namespace XenonCMS.Areas.Admin.Controllers
                     NewPage.SiteId = db.Sites.Single(x => x.Domain == RequestDomain).Id;
 
                     // Transform values
-                    NewPage.Slug = Globals.GetSlug(NewPage.Slug, true);
                     NewPage.Html = Globals.SaveImagesToDisk(NewPage.Html);
+                    if (NewPage.ParentId <= 0) NewPage.ParentId = null;
+                    NewPage.Slug = Globals.GetSlug(NewPage.Slug, true);
 
                     // Save changes
                     db.SitePages.Add(NewPage);
@@ -76,7 +75,6 @@ namespace XenonCMS.Areas.Admin.Controllers
             }
             else
             {
-                viewModel.GetLayouts();
                 viewModel.GetParents(db);
                 return View(viewModel);
             }
@@ -100,7 +98,6 @@ namespace XenonCMS.Areas.Admin.Controllers
                 else
                 {
                     var ViewModel = ModelConverter.Convert<Edit>(Page);
-                    ViewModel.GetLayouts();
                     ViewModel.GetParents(db);
                     return View(ViewModel);
                 }
@@ -131,7 +128,6 @@ namespace XenonCMS.Areas.Admin.Controllers
                     if ((OldSlug != NewSlug) && (db.SitePages.Any(x => (x.Site.Domain == RequestDomain) && (x.Slug == NewSlug))))
                     {
                         ModelState.AddModelError("SlugAlreadyUsed", "Slug has already been used");
-                        viewModel.GetLayouts();
                         viewModel.GetParents(db);
                         return View(viewModel);
                     }
@@ -144,8 +140,9 @@ namespace XenonCMS.Areas.Admin.Controllers
                         EditedPage.DateLastUpdated = DateTime.Now;
 
                         // Transform values
-                        EditedPage.Slug = NewSlug;
                         EditedPage.Html = Globals.SaveImagesToDisk(EditedPage.Html);
+                        if (EditedPage.ParentId <= 0) EditedPage.ParentId = null;
+                        EditedPage.Slug = NewSlug;
 
                         // Save changes
                         db.Entry(EditedPage).State = EntityState.Modified;
@@ -160,7 +157,6 @@ namespace XenonCMS.Areas.Admin.Controllers
             }
             else
             {
-                viewModel.GetLayouts();
                 viewModel.GetParents(db);
                 return View(viewModel);
             }

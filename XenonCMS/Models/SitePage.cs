@@ -12,7 +12,6 @@ namespace XenonCMS.Models
         public string LinkText { get; set; }
         public string Slug { get; set; }
         public string Html { get; set; }
-        public string Layout { get; set; }
         public bool ShowTitleOnPage { get; set; }
         public bool ShowInMenu { get; set; }
         public bool RightAlign { get; set; }

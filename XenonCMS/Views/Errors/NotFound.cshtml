@@ -1,16 +1,17 @@
 ﻿@using XenonCMS.Classes
 
 @{
-    Layout = "~/Views/Shared/_JumbotronSidebarLayout.cshtml";
     ViewBag.Title = "404 Not Found";
 }
 
-<p>Sorry, but the page you're looking for could not be found!</p>
-<p>
-    <a href="@Url.Content("~")" class="btn btn-primary btn-lg">Back to the Home page</a>
-    @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
-    {
-        //TODO Don't display this create link for built-in controller actions (ie blog, admin)
-        <a href="@Url.Action("Create", "Pages", new { area = "Admin" })?Url=@HttpUtility.UrlEncode(ViewContext.RequestContext.HttpContext.Request.RawUrl.Trim('/'))" class="btn btn-danger btn-lg">Create this page</a>
-            }
-</p>
+<div class="jumbotron">
+    <p>Sorry, but the page you're looking for could not be found!</p>
+    <p>
+        <a href="@Url.Content("~")" class="btn btn-primary btn-lg">Back to the Home page</a>
+        @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SiteAdmin"))
+        {
+            //TODO Don't display this create link for built-in controller actions (ie blog, admin)
+            <a href="@Url.Action("Create", "Pages", new { area = "Admin" })?Url=@HttpUtility.UrlEncode(ViewContext.RequestContext.HttpContext.Request.RawUrl.Trim('/'))" class="btn btn-danger btn-lg">Create this page</a>
+        }
+    </p>
+</div>
